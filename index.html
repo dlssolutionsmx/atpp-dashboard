@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATPP V2.1 — Generador funcional</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem; margin: 0; }
+        .dashboard { max-width: 1100px; width: 100%; background: white; border-radius: 32px; padding: 2rem; box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        h1 { font-size: 1.8rem; margin: 0 0 0.2rem; color: #0b2b4a; display: flex; align-items: center; gap: 0.5rem; }
+        .badge-v2 { background: #2b7be4; color: white; font-size: 0.7rem; padding: 0.2rem 0.8rem; border-radius: 40px; }
+        .sub { color: #3a5f7a; border-left: 4px solid #2b7be4; padding-left: 1rem; margin-bottom: 2rem; }
+        .fila { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-bottom: 1.8rem; }
+        .campo { flex: 1 1 180px; min-width: 160px; }
+        .campo.grande { flex: 2 1 300px; }
+        label { display: block; font-weight: 600; font-size: 0.8rem; color: #1e3b5a; margin-bottom: 0.25rem; }
+        select, input, textarea { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #ccd9e9; border-radius: 16px; font-size: 0.95rem; background: white; }
+        textarea { min-height: 80px; resize: vertical; }
+        .botonera { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin: 1.2rem 0 1.8rem; }
+        .btn { background: #1a3b5c; color: white; border: none; padding: 0.8rem 2.2rem; border-radius: 60px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #0f2a42; transform: scale(1.01); }
+        .btn.secundario { background: #e5edf8; color: #1a3b5c; }
+        .btn.secundario:hover { background: #d0ddee; }
+        .resultado { background: #f0f5fe; border-radius: 24px; padding: 1.5rem 2rem; border: 1px solid #d6e3f5; margin-top: 1.5rem; }
+        .tool-card { background: white; border-radius: 16px; padding: 1rem 1.5rem; margin: 0.8rem 0; border: 1px solid #d6e3f5; }
+        .tool-card .nombre { font-weight: 700; color: #0b2b4a; }
+        .tool-card .confianza { background: #d9e6f7; border-radius: 40px; padding: 0.1rem 0.8rem; font-size: 0.7rem; font-weight: 600; margin-left: 0.5rem; }
+        .actividad-html { background: #1a1e2a; color: #e8edf5; border-radius: 16px; padding: 1.2rem 1.5rem; margin: 1rem 0; font-family: 'Courier New', monospace; font-size: 0.85rem; white-space: pre-wrap; max-height: 400px; overflow-y: auto; border: 1px solid #3a4a5a; }
+        .copy-feedback { font-size: 0.9rem; color: #1e6b3b; background: #e0f2e6; padding: 0.4rem 1.2rem; border-radius: 60px; display: inline-block; }
+        .oculto { display: none; }
+        .separador { border-top: 2px dashed #bccfdf; margin: 1.5rem 0; }
+        .instruccion { background: #e8f0fe; border-radius: 16px; padding: 1rem 1.5rem; border-left: 4px solid #2b7be4; margin: 0.8rem 0; }
+        .mini-badge { background: #d0ddee; border-radius: 40px; padding: 0.1rem 0.6rem; font-size: 0.65rem; font-weight: 600; }
+        .btn-success { background: #1e7b4a; }
+        .btn-success:hover { background: #14633a; }
+    </style>
+</head>
+<body>
+<div class="dashboard" id="app">
+    <h1>📘 ATPP V2.1 <span class="badge-v2">Corregido</span></h1>
+    <div class="sub">Selecciona finalidad, nivel, contenido → Genera 3 actividades con HTML funcional</div>
+
+    <!-- FILTROS -->
+    <div class="fila">
+        <div class="campo">
+            <label>🎯 Finalidad</label>
+            <select id="finalidad">
+                <option value="activar">Activar / sondear</option>
+                <option value="practicar">Practicar / repasar</option>
+                <option value="evaluar">Evaluar / retroalimentar</option>
+                <option value="crear">Crear / producir</option>
+                <option value="colaborar">Colaborar / discutir</option>
+                <option value="explorar">Explorar / descubrir</option>
+                <option value="representar" selected>Representar / modelar</option>
+                <option value="reflexionar">Reflexionar / argumentar</option>
+                <option value="organizar">Organizar / secuenciar</option>
+            </select>
+        </div>
+        <div class="campo">
+            <label>📚 Nivel</label>
+            <select id="nivel">
+                <option value="Primaria (3°-6°)">Primaria (3°-6°)</option>
+                <option value="Secundaria (1°-3°)" selected>Secundaria (1°-3°)</option>
+                <option value="Media superior (preparatoria)">Media superior</option>
+                <option value="Profesional / docente">Profesional / docente</option>
+            </select>
+        </div>
+        <div class="campo">
+            <label>📖 Campo</label>
+            <input type="text" id="campo" placeholder="Ej. Matemáticas" value="Matemáticas">
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="fila">
+        <div class="campo grande">
+            <label>✏️ Contenido / tema</label>
+            <textarea id="contenido" placeholder="Ej. Ecuaciones lineales">Ecuaciones lineales</textarea>
+        </div>
+        <div class="campo">
+            <label>🎯 Objetivo</label>
+            <input type="text" id="objetivo" placeholder="Ej. Resolver ecuaciones" value="Resolver ecuaciones de primer grado">
+        </div>
+        <div class="campo">
+            <label>⏱️ Duración (min)</label>
+            <input type="number" id="duracion" value="10" min="3" max="20">
+        </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="botonera">
+        <button class="btn" id="btnGenerar">🚀 Generar actividades</button>
+        <button class="btn secundario" id="btnCopiarTodo">📋 Copiar todo</button>
+        <span id="feedbackCopiar" class="oculto copy-feedback">✅ Copiado</span>
+    </div>
+
+    <!-- RESULTADO -->
+    <div id="resultadoPanel" class="resultado">
+        <h3>🔍 Herramientas investigadas</h3>
+        <div id="listaHerramientas"><span style="color:#3f5f7a;">Haz clic en "Generar"</span></div>
+        <div class="separador"></div>
+        <h3>📝 Actividades generadas (HTML)</h3>
+        <div id="actividadesContainer"><div class="instruccion">Aquí aparecerán 3 actividades con su código HTML.</div></div>
+        <div class="separador"></div>
+        <div style="background:#ffffff; border-radius:20px; padding:1.2rem 1.5rem; border:1px solid #cbdbea;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.3rem;">
+                <span style="font-weight:600; color:#0b2b4a;">🧠 Prompt completo</span>
+                <span style="font-size:0.7rem; background:#e5edf8; padding:0.2rem 0.8rem; border-radius:40px;">copia y pega</span>
+            </div>
+            <textarea id="promptOutput" readonly style="width:100%; border:none; background:#f8fafc; border-radius:12px; padding:1rem; font-size:0.9rem; line-height:1.6; resize:vertical; min-height:120px; font-family:inherit;">Aquí aparecerá el prompt.</textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        "use strict";
+
+        // -------------------- BASE DE DATOS --------------------
+        const herramientas = [
+            { id: 'APP-08', nombre: 'Padlet', familia: 'Muro colaborativo', confianza: 'Alta', descripcion: 'Muro digital donde se publican textos, imágenes, audio y video. Ideal para lluvia de ideas.', como_funciona: 'El docente crea un muro y comparte enlace; los alumnos publican sin cuenta.', finalidades: ['colaborar','organizar','crear','reflexionar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-04', nombre: 'Educaplay', familia: 'Actividades multimedia', confianza: 'Media-alta', descripcion: 'Crea crucigramas, mapas, juegos de memoria, etc.', como_funciona: 'El docente diseña una actividad y comparte enlace; los alumnos resuelven en línea.', finalidades: ['practicar','evaluar','crear'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-12', nombre: 'Google Earth', familia: 'Visualización 3D', confianza: 'Alta', descripcion: 'Globo virtual con imágenes satelitales y recorridos guiados.', como_funciona: 'Se navega, se miden distancias y se crean proyectos con marcadores.', finalidades: ['explorar','representar','contextualizar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-13', nombre: 'GeoGebra', familia: 'Matemáticas dinámicas', confianza: 'Alta', descripcion: 'Geometría, álgebra, cálculo y gráficas interactivas.', como_funciona: 'Manipula objetos matemáticos y observa cambios en tiempo real.', finalidades: ['representar','modelar','explorar','practicar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-14', nombre: 'Desmos', familia: 'Matemáticas interactivas', confianza: 'Alta', descripcion: 'Calculadora gráfica y actividades matemáticas.', como_funciona: 'Introduce funciones, modifica parámetros y observa gráficas.', finalidades: ['representar','modelar','explorar','practicar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-18', nombre: 'PhET', familia: 'Simulaciones STEM', confianza: 'Alta', descripcion: 'Simulaciones de física, química, biología y matemáticas.', como_funciona: 'Explora manipulando variables y observando fenómenos.', finalidades: ['explorar','experimentar','representar','practicar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-21', nombre: 'Scratch', familia: 'Programación visual', confianza: 'Alta', descripcion: 'Programación por bloques para crear historias y juegos.', como_funciona: 'Arrastra bloques para programar personajes y escenas.', finalidades: ['crear','representar','colaborar','secuenciar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-22', nombre: 'Tinkercad', familia: 'Diseño 3D', confianza: 'Alta', descripcion: 'Diseño 3D, circuitos y programación por bloques.', como_funciona: 'Crea modelos 3D o circuitos virtuales combinando formas.', finalidades: ['crear','modelar','prototipar','representar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-29', nombre: 'StoryJumper', familia: 'Creación de libros', confianza: 'Alta', descripcion: 'Crea libros digital
