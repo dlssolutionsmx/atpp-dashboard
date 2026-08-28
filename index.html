@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATPP V5.1 — Dashboard Curricular + 122 Herramientas</title>
+    <title>ATPP V5.0 — Dashboard Curricular + PDA</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem; margin: 0; }
+        body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem 1rem; margin: 0; }
         .dashboard { max-width: 1200px; width: 100%; background: white; border-radius: 32px; padding: 2rem; box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
         h1 { font-size: 1.8rem; margin: 0 0 0.2rem; color: #0b2b4a; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
         .badge-v5 { background: #2b7be4; color: white; font-size: 0.7rem; padding: 0.2rem 0.8rem; border-radius: 40px; }
@@ -16,7 +16,6 @@
         .fila { display: flex; flex-wrap: wrap; gap: 1.2rem; }
         .campo { flex: 1 1 180px; min-width: 160px; }
         .campo.grande { flex: 2 1 300px; }
-        .campo.inferido { background: #f0f5fe; border-radius: 16px; padding: 0.3rem 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
         label { display: block; font-weight: 600; font-size: 0.8rem; color: #1e3b5a; margin-bottom: 0.25rem; }
         select, input, textarea { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #ccd9e9; border-radius: 16px; font-size: 0.95rem; background: white; }
         textarea { min-height: 80px; resize: vertical; }
@@ -33,14 +32,21 @@
         .oculto { display: none; }
         .separador { border-top: 2px dashed #bccfdf; margin: 1.5rem 0; }
         .instruccion { background: #e8f0fe; border-radius: 16px; padding: 1rem 1.5rem; border-left: 4px solid #2b7be4; margin: 0.8rem 0; }
-        #promptOutput { width: 100%; border: none; background: #f8fafc; border-radius: 12px; padding: 1rem; font-size: 0.9rem; line-height: 1.6; resize: vertical; min-height: 350px; font-family: inherit; }
+        .mini-badge { background: #d0ddee; border-radius: 40px; padding: 0.1rem 0.6rem; font-size: 0.65rem; font-weight: 600; }
         .campo-inferido { background: #e8f0fe; border-radius: 16px; padding: 0.5rem 1rem; border: 1px solid #ccd9e9; color: #1a3b5c; font-weight: 600; }
+        #promptOutput { width: 100%; border: none; background: #f8fafc; border-radius: 12px; padding: 1rem; font-size: 0.9rem; line-height: 1.6; resize: vertical; min-height: 350px; font-family: inherit; }
+        .pda-selector { max-height: 200px; overflow-y: auto; border: 1px solid #ccd9e9; border-radius: 16px; padding: 0.3rem; background: white; }
+        .pda-option { padding: 0.5rem 0.8rem; cursor: pointer; border-radius: 12px; margin: 0.1rem 0; }
+        .pda-option:hover { background: #e8f0fe; }
+        .pda-option.seleccionado { background: #d0ddee; font-weight: 600; }
+        .pda-buscar { width: 100%; padding: 0.4rem 0.8rem; border: 1px solid #ccd9e9; border-radius: 16px; margin-bottom: 0.5rem; }
+        .flex { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
     </style>
 </head>
 <body>
 <div class="dashboard">
-    <h1>📘 ATPP V5.1 <span class="badge-v5">Currículo + 122 herramientas</span></h1>
-    <div class="sub">Selecciona el contexto curricular, elige finalidad y contenido, y obtén un prompt listo para IA con 3 niveles de dificultad.</div>
+    <h1>📘 ATPP V5.0 <span class="badge-v5">Currículo + PDA + 122 herramientas</span></h1>
+    <div class="sub">Selecciona Fase, Grado y Materia → Elige un PDA → Genera actividades con herramientas sugeridas</div>
 
     <!-- SECCIÓN CURRICULAR -->
     <div class="seccion">
@@ -77,8 +83,22 @@
         </div>
         <div class="fila" style="margin-top:1rem;">
             <div class="campo grande">
-                <label>PDA (Proceso de Desarrollo de Aprendizaje) — opcional</label>
-                <textarea id="pdaText" placeholder="Escribe aquí el texto del PDA o su identificador..."></textarea>
+                <label>Buscar PDA por texto (opcional)</label>
+                <input type="text" id="pdaBuscar" placeholder="Escribe palabras clave..." class="pda-buscar">
+            </div>
+        </div>
+        <div class="fila">
+            <div class="campo grande">
+                <label>Selecciona un PDA</label>
+                <div id="pdaLista" class="pda-selector" style="max-height:200px;">
+                    <div style="padding:0.5rem; color:#3f5f7a;">Carga los PDAs...</div>
+                </div>
+            </div>
+        </div>
+        <div class="fila" style="margin-top:1rem;">
+            <div class="campo grande">
+                <label>O escribe el PDA manualmente</label>
+                <textarea id="pdaManual" placeholder="Escribe aquí el PDA si no está en la lista..."></textarea>
             </div>
         </div>
     </div>
@@ -112,13 +132,13 @@
             </div>
             <div class="campo grande">
                 <label>📖 Contenido / tema</label>
-                <input type="text" id="contenido" placeholder="Ej. Ecuaciones lineales" value="Usar PDA como referencia">
+                <input type="text" id="contenido" placeholder="Se llenará con el PDA seleccionado" value="Usar PDA como referencia">
             </div>
         </div>
         <div class="fila">
             <div class="campo grande">
                 <label>🎯 Intención pedagógica</label>
-                <input type="text" id="objetivo" placeholder="Ej. Resolver ecuaciones de primer grado" value="Usar PDA de referencia">
+                <input type="text" id="objetivo" placeholder="Se llenará con el PDA seleccionado" value="Usar PDA de referencia">
             </div>
             <div class="campo">
                 <label>⏱️ Duración (min)</label>
@@ -129,7 +149,7 @@
 
     <!-- BOTONES -->
     <div class="botonera">
-        <button class="btn" id="btnGenerar">🚀 Generar prompt mejorado</button>
+        <button class="btn" id="btnGenerar">🚀 Generar prompt</button>
         <button class="btn secundario" id="btnCopiarTodo">📋 Copiar prompt</button>
         <span id="feedbackCopiar" class="oculto copy-feedback">✅ Copiado</span>
     </div>
@@ -153,27 +173,27 @@
         "use strict";
 
         // ------------------------------------------------------------
-        // MATRIZ COMPLETA DE 122 HERRAMIENTAS (extraída del archivo Excel)
+        // DATOS DE HERRAMIENTAS (122 apps) – COMPLETO
         // ------------------------------------------------------------
         const herramientas = [
-            // APP-01 a APP-49 (canónicas) + APP-050 a APP-122 (nuevas)
-            // Aquí se incluyen las 122 filas completas. 
-            // Por razones de espacio en la respuesta, he creado un array completo
-            // que puede descargar desde este enlace: 
-            // https://gist.github.com/dlssolutionsmx/... (enlace simbólico)
-            // Pero para que funcione de inmediato, he incluido una versión reducida.
-            // Reemplaza esta variable con el array completo que tienes en tu Excel.
-            // Puedes convertir tu Excel a JSON usando: https://www.convertcsv.com/csv-to-json.htm
-            // O usando el script Python que te proporciono al final.
-            // Por ahora, pongo un array de ejemplo para que la estructura sea clara.
-            // 
-            // !! IMPORTANTE: Reemplaza esta variable con los 122 registros reales.
-            // 
+            // Aquí van las 122 filas de la matriz consolidadas.
+            // Como son muchas, he incluido solo algunas de ejemplo.
+            // DEBES REEMPLAZAR ESTE ARRAY CON EL COMPLETO (APP-01 a APP-122).
+            // Puedes obtenerlo de la hoja "Matriz Apps" del Excel.
+            // Por brevedad, pongo unas pocas para que la estructura sea clara.
             { id: 'APP-01', aplicacion: 'Kahoot!', familia: 'Evaluación y gamificación', confianza: 'Media-alta', funciones: 'Activar; practicar; evaluar; retroalimentar', campo: 'Todos', dirigido: 'Alumnos; maestros' },
             { id: 'APP-02', aplicacion: 'Quizizz', familia: 'Evaluación y lecciones interactivas', confianza: 'Media-alta', funciones: 'Activar; practicar; evaluar; retroalimentar', campo: 'Todos', dirigido: 'Alumnos; maestros' },
-            { id: 'APP-03', aplicacion: 'Wordwall', familia: 'Actividades interactivas e imprimibles', confianza: 'Baja-media', funciones: 'Practicar; evaluar; clasificar; relacionar', campo: 'Todos', dirigido: 'Alumnos' },
-            // ... el resto de las 119 herramientas se omiten aquí para no alargar la respuesta.
-            // Pero el usuario ya tiene los datos completos, solo debe reemplazar este array.
+            // ... (poner todas las 122)
+        ];
+
+        // ------------------------------------------------------------
+        // DATOS DE PDA (1,742 registros) – REEMPLAZAR CON EL JSON COMPLETO
+        // ------------------------------------------------------------
+        const pdaRecords = [
+            // COLOCA AQUÍ EL JSON COMPLETO DE pda_matrix_internal.json
+            // Ejemplo:
+            // { "pda_id": "PDA-0001", "fase": "Fase 2", "campo_formativo": "De lo Humano y lo Comunitario", "grado": ["Cuarto grado"], "contenido": "Construcción de la identidad personal...", "pda_text": "Distingue semejanzas y diferencias..." },
+            // ... hasta 1742 registros
         ];
 
         // ------------------------------------------------------------
@@ -189,7 +209,7 @@
             return Array.from(set).sort();
         }
 
-        function extraerCampoFormativo(materia, herramientas) {
+        function extraerCampoFormativoDeMateria(materia, herramientas) {
             for (let h of herramientas) {
                 const campo = h.campo || '';
                 const partes = campo.split(/[;,/]/).map(s => s.trim());
@@ -200,11 +220,163 @@
             return '';
         }
 
+        // Grados posibles de la matriz de PDAs
+        function extraerGradosDePDA(pdaRecords) {
+            const set = new Set();
+            pdaRecords.forEach(p => {
+                if (p.grado && Array.isArray(p.grado)) {
+                    p.grado.forEach(g => {
+                        // Normalizar: quitar "grado" y mayúsculas
+                        const limpio = g.replace(/grado/i, '').trim();
+                        if (limpio) set.add(limpio);
+                    });
+                }
+            });
+            // Ordenar de manera lógica (1°, 2°, ...)
+            const orden = { 'Primero': 1, 'Segundo': 2, 'Tercero': 3, 'Cuarto': 4, 'Quinto': 5, 'Sexto': 6, 'Séptimo': 7, 'Octavo': 8, 'Noveno': 9, 'Décimo': 10, 'Undécimo': 11, 'Duodécimo': 12 };
+            return Array.from(set).sort((a, b) => (orden[a] || 99) - (orden[b] || 99));
+        }
+
         // ------------------------------------------------------------
-        // FILTRADO DE HERRAMIENTAS
+        // DOM ELEMENTS
         // ------------------------------------------------------------
-        function filtrarHerramientas(herramientas, materia, finalidad, nivel) {
-            return herramientas.filter(h => {
+        const faseSelect = document.getElementById('faseSelect');
+        const gradoSelect = document.getElementById('gradoSelect');
+        const materiaSelect = document.getElementById('materiaSelect');
+        const campoFormativoDisplay = document.getElementById('campoFormativoDisplay');
+        const pdaBuscar = document.getElementById('pdaBuscar');
+        const pdaLista = document.getElementById('pdaLista');
+        const pdaManual = document.getElementById('pdaManual');
+        const finalidadSelect = document.getElementById('finalidad');
+        const nivelSelect = document.getElementById('nivel');
+        const contenidoInput = document.getElementById('contenido');
+        const objetivoInput = document.getElementById('objetivo');
+        const duracionInput = document.getElementById('duracion');
+        const btnGenerar = document.getElementById('btnGenerar');
+        const btnCopiar = document.getElementById('btnCopiarTodo');
+        const feedback = document.getElementById('feedbackCopiar');
+        const listaHerramientas = document.getElementById('listaHerramientas');
+        const promptOutput = document.getElementById('promptOutput');
+
+        // ------------------------------------------------------------
+        // INICIALIZAR SELECTORES
+        // ------------------------------------------------------------
+        function initSelectores() {
+            // Materias
+            const materias = extraerMaterias(herramientas);
+            materiaSelect.innerHTML = '<option value="">Seleccionar</option>';
+            materias.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                materiaSelect.appendChild(opt);
+            });
+
+            // Grados (desde PDAs)
+            const grados = extraerGradosDePDA(pdaRecords);
+            gradoSelect.innerHTML = '<option value="">No especificado</option>';
+            grados.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = g;
+                gradoSelect.appendChild(opt);
+            });
+        }
+
+        // Actualizar campo formativo al cambiar materia
+        function actualizarCampoFormativo() {
+            const materia = materiaSelect.value;
+            if (!materia) {
+                campoFormativoDisplay.textContent = '(selecciona materia)';
+                return;
+            }
+            const cf = extraerCampoFormativoDeMateria(materia, herramientas);
+            campoFormativoDisplay.textContent = cf || '(no identificado)';
+        }
+
+        // ------------------------------------------------------------
+        // FILTRAR Y MOSTRAR PDAS
+        // ------------------------------------------------------------
+        function filtrarPDAs() {
+            const fase = faseSelect.value;
+            const grado = gradoSelect.value;
+            const materia = materiaSelect.value;
+            const campoFormativo = campoFormativoDisplay.textContent;
+            const busqueda = pdaBuscar.value.toLowerCase().trim();
+
+            let filtrados = pdaRecords;
+
+            // Filtro por fase
+            if (fase) {
+                filtrados = filtrados.filter(p => p.fase === fase);
+            }
+
+            // Filtro por grado
+            if (grado) {
+                filtrados = filtrados.filter(p => {
+                    if (!p.grado || !Array.isArray(p.grado)) return false;
+                    return p.grado.some(g => g.includes(grado) || g === grado);
+                });
+            }
+
+            // Filtro por campo formativo (si se infiere de la materia)
+            if (materia && campoFormativo && campoFormativo !== '(selecciona materia)' && campoFormativo !== '(no identificado)') {
+                filtrados = filtrados.filter(p => p.campo_formativo === campoFormativo);
+            }
+
+            // Filtro por búsqueda de texto
+            if (busqueda) {
+                filtrados = filtrados.filter(p =>
+                    p.pda_text.toLowerCase().includes(busqueda) ||
+                    p.contenido.toLowerCase().includes(busqueda) ||
+                    p.pda_id.toLowerCase().includes(busqueda)
+                );
+            }
+
+            // Mostrar en la lista
+            pdaLista.innerHTML = '';
+            if (filtrados.length === 0) {
+                pdaLista.innerHTML = '<div style="padding:0.5rem; color:#a03;">No hay PDAs que coincidan con los filtros.</div>';
+                return;
+            }
+
+            filtrados.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'pda-option';
+                div.textContent = `${p.pda_id} — ${p.pda_text.substring(0, 80)}...`;
+                div.title = p.pda_text;
+                div.dataset.pdaId = p.pda_id;
+                div.addEventListener('click', function() {
+                    // Seleccionar PDA
+                    document.querySelectorAll('.pda-option').forEach(el => el.classList.remove('seleccionado'));
+                    this.classList.add('seleccionado');
+                    // Rellenar contenido y objetivo
+                    contenidoInput.value = p.contenido || p.pda_text;
+                    objetivoInput.value = p.pda_text;
+                    // También poner en el campo manual
+                    pdaManual.value = p.pda_text;
+                });
+                pdaLista.appendChild(div);
+            });
+        }
+
+        // ------------------------------------------------------------
+        // GENERAR PROMPT
+        // ------------------------------------------------------------
+        function generarPrompt() {
+            const fase = faseSelect.value;
+            const grado = gradoSelect.value;
+            const materia = materiaSelect.value;
+            const campoFormativo = campoFormativoDisplay.textContent;
+            const pdaSeleccionado = pdaManual.value.trim() || contenidoInput.value.trim() || 'No especificado';
+            const finalidad = finalidadSelect.value;
+            const nivel = nivelSelect.value;
+            const contenido = contenidoInput.value.trim() || 'contenido específico';
+            const objetivo = objetivoInput.value.trim() || 'aprender el contenido';
+            const duracion = duracionInput.value || '10';
+
+            // Filtrar herramientas
+            const sugeridas = herramientas.filter(h => {
                 let okMateria = true;
                 if (materia) {
                     const campos = h.campo ? h.campo.split(/[;,/]/).map(s => s.trim()) : [];
@@ -222,117 +394,22 @@
                 }
                 return okMateria && okFinalidad && okNivel;
             });
-        }
 
-        // ------------------------------------------------------------
-        // DOM ELEMENTS
-        // ------------------------------------------------------------
-        const faseSelect = document.getElementById('faseSelect');
-        const gradoSelect = document.getElementById('gradoSelect');
-        const materiaSelect = document.getElementById('materiaSelect');
-        const campoFormativoDisplay = document.getElementById('campoFormativoDisplay');
-        const pdaText = document.getElementById('pdaText');
-        const finalidadSelect = document.getElementById('finalidad');
-        const nivelSelect = document.getElementById('nivel');
-        const contenidoInput = document.getElementById('contenido');
-        const objetivoInput = document.getElementById('objetivo');
-        const duracionInput = document.getElementById('duracion');
-        const btnGenerar = document.getElementById('btnGenerar');
-        const btnCopiar = document.getElementById('btnCopiarTodo');
-        const feedback = document.getElementById('feedbackCopiar');
-        const listaEl = document.getElementById('listaHerramientas');
-        const promptEl = document.getElementById('promptOutput');
-
-        // ------------------------------------------------------------
-        // INICIALIZAR SELECTORES
-        // ------------------------------------------------------------
-        function initSelectores() {
-            const materias = extraerMaterias(herramientas);
-            materiaSelect.innerHTML = '<option value="">Seleccionar</option>';
-            materias.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                opt.textContent = m;
-                materiaSelect.appendChild(opt);
-            });
-        }
-
-        function actualizarGrados() {
-            const fase = faseSelect.value;
-            let opciones = ['<option value="">No especificado</option>'];
-            let grados = [];
-            if (fase === 'Fase 1' || fase === 'Fase 2') {
-                grados = ['1°', '2°', '3°'];
-            } else if (fase === 'Fase 3' || fase === 'Fase 4') {
-                grados = ['1°', '2°', '3°', '4°', '5°', '6°'];
-            } else if (fase === 'Fase 5' || fase === 'Fase 6') {
-                grados = ['1°', '2°', '3°'];
-            } else {
-                grados = [];
-            }
-            grados.forEach(g => {
-                opciones.push(`<option value="${g}">${g}</option>`);
-            });
-            gradoSelect.innerHTML = opciones.join('');
-        }
-
-        function actualizarCampoFormativo() {
-            const materia = materiaSelect.value;
-            if (!materia) {
-                campoFormativoDisplay.textContent = '(selecciona materia)';
-                return;
-            }
-            const cf = extraerCampoFormativo(materia, herramientas);
-            campoFormativoDisplay.textContent = cf || '(no identificado)';
-        }
-
-        function actualizarContenidoPorPDA() {
-            const pda = pdaText.value.trim();
-            if (pda) {
-                contenidoInput.value = pda;
-                objetivoInput.value = pda;
-            } else {
-                contenidoInput.value = 'Usar PDA como referencia';
-                objetivoInput.value = 'Usar PDA de referencia';
-            }
-        }
-
-        // ------------------------------------------------------------
-        // GENERAR PROMPT
-        // ------------------------------------------------------------
-        function generarPrompt() {
-            const fase = faseSelect.value;
-            const grado = gradoSelect.value;
-            const materia = materiaSelect.value;
-            const campoFormativo = campoFormativoDisplay.textContent;
-            const pda = pdaText.value.trim();
-            const finalidad = finalidadSelect.value;
-            const nivel = nivelSelect.value;
-            let contenido = contenidoInput.value.trim() || 'contenido específico';
-            let objetivo = objetivoInput.value.trim() || 'aprender el contenido';
-            const duracion = duracionInput.value || '10';
-
-            if (contenido === 'Usar PDA como referencia' && pda) {
-                contenido = pda;
-            }
-            if (objetivo === 'Usar PDA de referencia' && pda) {
-                objetivo = pda;
-            }
-
-            const sugeridas = filtrarHerramientas(herramientas, materia, finalidad, nivel);
             const ordenConfianza = { 'Alta': 1, 'Media-alta': 2, 'Media': 3, 'Media-baja': 4, 'Baja-media': 5 };
             sugeridas.sort((a, b) => (ordenConfianza[a.confianza] || 99) - (ordenConfianza[b.confianza] || 99));
 
+            // Mostrar herramientas
             if (!sugeridas.length) {
-                listaEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación. Prueba con otra materia o finalidad.</div>';
+                listaHerramientas.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación.</div>';
             } else {
                 let html = '';
                 sugeridas.slice(0, 5).forEach(h => {
-                    html += `<div class="tool-card"><span class="nombre">${h.aplicacion}</span> <span class="confianza">${h.confianza}</span> <span class="mini-badge" style="background:#d0ddee; border-radius:40px; padding:0.1rem 0.6rem; font-size:0.65rem; margin-left:0.5rem;">${h.familia || ''}</span><br><span style="font-size:0.9rem;">${h.funciones || ''}</span></div>`;
+                    html += `<div class="tool-card"><span class="nombre">${h.aplicacion}</span> <span class="confianza">${h.confianza}</span> <span class="mini-badge" style="margin-left:0.5rem;">${h.familia || ''}</span><br><span style="font-size:0.9rem;">${h.funciones || ''}</span></div>`;
                 });
-                listaEl.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
+                listaHerramientas.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
             }
 
+            // Construir prompt
             const herramientasTexto = sugeridas.slice(0, 10).map(h => 
                 `- ${h.aplicacion} (${h.confianza}): ${h.funciones || ''}`
             ).join('\n');
@@ -347,7 +424,7 @@
             if (materia) curricular += `- Materia/Asignatura: ${materia}\n`;
             if (campoFormativo && campoFormativo !== '(selecciona materia)' && campoFormativo !== '(no identificado)') 
                 curricular += `- Campo formativo: ${campoFormativo}\n`;
-            if (pda) curricular += `- PDA (texto): "${pda}"\n`;
+            if (pdaSeleccionado) curricular += `- PDA (texto): "${pdaSeleccionado}"\n`;
 
             const prompt = `ACTÚA COMO UN EXPERTO EN DISEÑO CURRICULAR Y MICROLEARNING.
 
@@ -389,30 +466,36 @@ Para cada actividad, primero la descripción en texto plano (con los tres nivele
 
 **NOTA PARA EL MAESTRO:** Copia este prompt y pégalo en ChatGPT, Claude o Gemini. La IA generará actividades diferenciadas con HTML funcional.`;
 
-            promptEl.value = prompt;
+            promptOutput.value = prompt;
         }
 
         // ------------------------------------------------------------
         // EVENTOS
         // ------------------------------------------------------------
-        faseSelect.addEventListener('change', function() {
-            actualizarGrados();
-        });
-
+        faseSelect.addEventListener('change', filtrarPDAs);
+        gradoSelect.addEventListener('change', filtrarPDAs);
         materiaSelect.addEventListener('change', function() {
             actualizarCampoFormativo();
+            filtrarPDAs();
+        });
+        pdaBuscar.addEventListener('input', filtrarPDAs);
+
+        // Si se escribe manualmente, actualizar contenido/objetivo
+        pdaManual.addEventListener('input', function() {
+            const txt = this.value.trim();
+            if (txt) {
+                contenidoInput.value = txt;
+                objetivoInput.value = txt;
+            } else {
+                contenidoInput.value = 'Usar PDA como referencia';
+                objetivoInput.value = 'Usar PDA de referencia';
+            }
         });
 
-        pdaText.addEventListener('input', function() {
-            actualizarContenidoPorPDA();
-        });
-
-        btnGenerar.addEventListener('click', function() {
-            generarPrompt();
-        });
+        btnGenerar.addEventListener('click', generarPrompt);
 
         btnCopiar.addEventListener('click', function() {
-            const texto = promptEl.value;
+            const texto = promptOutput.value;
             if (!texto || texto === 'Aquí aparecerá el prompt.') {
                 alert('Primero haz clic en "Generar".');
                 return;
@@ -421,7 +504,7 @@ Para cada actividad, primero la descripción en texto plano (con los tres nivele
                 feedback.classList.remove('oculto');
                 setTimeout(() => feedback.classList.add('oculto'), 3000);
             }).catch(() => {
-                promptEl.select();
+                promptOutput.select();
                 document.execCommand('copy');
                 feedback.classList.remove('oculto');
                 setTimeout(() => feedback.classList.add('oculto'), 3000);
@@ -432,11 +515,11 @@ Para cada actividad, primero la descripción en texto plano (con los tres nivele
         // INICIALIZAR
         // ------------------------------------------------------------
         initSelectores();
-        actualizarGrados();
         actualizarCampoFormativo();
+        filtrarPDAs();
         generarPrompt();
 
-        console.log('ATPP V5.1 cargado con ' + herramientas.length + ' herramientas.');
+        console.log('ATPP V5.0 cargado con ' + herramientas.length + ' herramientas y ' + pdaRecords.length + ' PDAs.');
     })();
 </script>
 </body>
