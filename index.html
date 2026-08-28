@@ -32,8 +32,6 @@
         .separador { border-top: 2px dashed #bccfdf; margin: 1.5rem 0; }
         .instruccion { background: #e8f0fe; border-radius: 16px; padding: 1rem 1.5rem; border-left: 4px solid #2b7be4; margin: 0.8rem 0; }
         .mini-badge { background: #d0ddee; border-radius: 40px; padding: 0.1rem 0.6rem; font-size: 0.65rem; font-weight: 600; }
-        .btn-success { background: #1e7b4a; }
-        .btn-success:hover { background: #14633a; }
     </style>
 </head>
 <body>
@@ -41,7 +39,6 @@
     <h1>📘 ATPP V2.1 <span class="badge-v2">Corregido</span></h1>
     <div class="sub">Selecciona finalidad, nivel, contenido → Genera 3 actividades con HTML funcional</div>
 
-    <!-- FILTROS -->
     <div class="fila">
         <div class="campo">
             <label>🎯 Finalidad</label>
@@ -72,7 +69,6 @@
         </div>
     </div>
 
-    <!-- CONTENIDO -->
     <div class="fila">
         <div class="campo grande">
             <label>✏️ Contenido / tema</label>
@@ -88,14 +84,12 @@
         </div>
     </div>
 
-    <!-- BOTONES -->
     <div class="botonera">
         <button class="btn" id="btnGenerar">🚀 Generar actividades</button>
         <button class="btn secundario" id="btnCopiarTodo">📋 Copiar todo</button>
         <span id="feedbackCopiar" class="oculto copy-feedback">✅ Copiado</span>
     </div>
 
-    <!-- RESULTADO -->
     <div id="resultadoPanel" class="resultado">
         <h3>🔍 Herramientas investigadas</h3>
         <div id="listaHerramientas"><span style="color:#3f5f7a;">Haz clic en "Generar"</span></div>
@@ -117,7 +111,6 @@
     (function() {
         "use strict";
 
-        // -------------------- BASE DE DATOS --------------------
         const herramientas = [
             { id: 'APP-08', nombre: 'Padlet', familia: 'Muro colaborativo', confianza: 'Alta', descripcion: 'Muro digital donde se publican textos, imágenes, audio y video. Ideal para lluvia de ideas.', como_funciona: 'El docente crea un muro y comparte enlace; los alumnos publican sin cuenta.', finalidades: ['colaborar','organizar','crear','reflexionar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-04', nombre: 'Educaplay', familia: 'Actividades multimedia', confianza: 'Media-alta', descripcion: 'Crea crucigramas, mapas, juegos de memoria, etc.', como_funciona: 'El docente diseña una actividad y comparte enlace; los alumnos resuelven en línea.', finalidades: ['practicar','evaluar','crear'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
@@ -127,4 +120,199 @@
             { id: 'APP-18', nombre: 'PhET', familia: 'Simulaciones STEM', confianza: 'Alta', descripcion: 'Simulaciones de física, química, biología y matemáticas.', como_funciona: 'Explora manipulando variables y observando fenómenos.', finalidades: ['explorar','experimentar','representar','practicar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-21', nombre: 'Scratch', familia: 'Programación visual', confianza: 'Alta', descripcion: 'Programación por bloques para crear historias y juegos.', como_funciona: 'Arrastra bloques para programar personajes y escenas.', finalidades: ['crear','representar','colaborar','secuenciar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-22', nombre: 'Tinkercad', familia: 'Diseño 3D', confianza: 'Alta', descripcion: 'Diseño 3D, circuitos y programación por bloques.', como_funciona: 'Crea modelos 3D o circuitos virtuales combinando formas.', finalidades: ['crear','modelar','prototipar','representar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
-            { id: 'APP-29', nombre: 'StoryJumper', familia: 'Creación de libros', confianza: 'Alta', descripcion: 'Crea libros digital
+            { id: 'APP-29', nombre: 'StoryJumper', familia: 'Creación de libros', confianza: 'Alta', descripcion: 'Crea libros digitales ilustrados.', como_funciona: 'Usa plantillas o sube imágenes; el libro se comparte por enlace.', finalidades: ['crear','narrar','colaborar','comunicar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)'] },
+            { id: 'APP-30', nombre: 'CommonLit', familia: 'Comprensión lectora', confianza: 'Alta', descripcion: 'Biblioteca digital con textos y preguntas de comprensión.', como_funciona: 'Lee un texto y responde preguntas; el docente ve el progreso.', finalidades: ['leer','comprender','analizar','evaluar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-36', nombre: 'iCivics', familia: 'Civismo', confianza: 'Alta', descripcion: 'Juegos sobre educación cívica y gobierno.', como_funciona: 'Simula decisiones como legislador o juez.', finalidades: ['comprender','decidir','argumentar','evaluar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-16', nombre: 'iNaturalist', familia: 'Ciencia ciudadana', confianza: 'Alta', descripcion: 'Registro de biodiversidad con fotos y ubicación.', como_funciona: 'Fotografía una especie, súbela y la comunidad ayuda a identificarla.', finalidades: ['explorar','investigar','colaborar','registrar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-46', nombre: 'Kinovea', familia: 'Análisis deportivo', confianza: 'Alta', descripcion: 'Análisis de video para deportes, con anotaciones y mediciones.', como_funciona: 'Graba un movimiento, analiza en cámara lenta y compara.', finalidades: ['observar','analizar','comparar','retroalimentar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-01', nombre: 'Kahoot!', familia: 'Evaluación gamificada', confianza: 'Media-alta', descripcion: 'Quizzes en tiempo real con puntuación.', como_funciona: 'Crea un quiz, los alumnos responden desde sus dispositivos.', finalidades: ['evaluar','practicar','activar','retroalimentar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-02', nombre: 'Quizizz', familia: 'Evaluación y lecciones', confianza: 'Media-alta', descripcion: 'Quizzes asíncronos con retroalimentación inmediata.', como_funciona: 'Los alumnos responden a su ritmo y ven explicaciones.', finalidades: ['evaluar','practicar','activar','retroalimentar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-06', nombre: 'Mentimeter', familia: 'Presentación interactiva', confianza: 'Alta', descripcion: 'Encuestas, nubes de palabras y quizzes en presentaciones.', como_funciona: 'El presentador proyecta preguntas y la audiencia responde en vivo.', finalidades: ['activar','sondear','evaluar','reflexionar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)','Profesional / docente'] },
+            { id: 'APP-31', nombre: 'TimelineJS', familia: 'Línea de tiempo', confianza: 'Alta', descripcion: 'Crea líneas de tiempo interactivas desde Google Sheets.', como_funciona: 'Llena una plantilla en Sheets, publica y obtén un enlace interactivo.', finalidades: ['organizar','secuenciar','narrar','contextualizar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-32', nombre: 'ArcGIS Online', familia: 'Cartografía SIG', confianza: 'Alta', descripcion: 'Crea mapas interactivos con capas de datos.', como_funciona: 'Agrega capas, modifica estilos y comparte por enlace.', finalidades: ['explorar','mapear','localizar','analizar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] }
+        ];
+
+        function sugerirHerramientas(finalidad, nivel) {
+            return herramientas.filter(h => {
+                const okFinalidad = h.finalidades.some(f => f === finalidad);
+                const okNivel = h.nivel.some(n => n === nivel) || h.nivel.includes('Todos');
+                return okFinalidad && okNivel;
+            }).sort((a,b) => {
+                const orden = {'Alta':1, 'Media-alta':2, 'Media':3};
+                return (orden[a.confianza]||99) - (orden[b.confianza]||99);
+            });
+        }
+
+        function generarHTMLActividad(titulo, herramienta, descripcion, finalidad, contenido, objetivo, duracion) {
+            return `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Actividad: ${titulo}</title>
+<style>
+body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; background: #f4f8ff; color: #0b2b4a; }
+.card { background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+h1 { color: #0b2b4a; border-bottom: 3px solid #2b7be4; padding-bottom: 0.5rem; }
+.badge { background: #2b7be4; color: white; padding: 0.2rem 0.8rem; border-radius: 40px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
+.instruccion { background: #e8f0fe; padding: 1.2rem; border-radius: 16px; margin: 1.5rem 0; border-left: 4px solid #2b7be4; }
+.herramienta { background: #f0f5fe; padding: 0.8rem 1.2rem; border-radius: 40px; display: inline-block; margin: 0.5rem 0; }
+.pasos { background: #f9fafc; padding: 1rem 1.5rem; border-radius: 16px; margin: 1rem 0; }
+.exito { background: #dff0e6; padding: 0.8rem 1.2rem; border-radius: 12px; border-left: 4px solid #1e7b4a; }
+</style>
+</head>
+<body>
+<div class="card">
+    <h1>📘 ${titulo}</h1>
+    <div><span class="badge">${finalidad}</span> <span class="badge" style="background:#6c7a8a;">⏱️ ${duracion} min</span></div>
+    <div class="herramienta">🛠️ <strong>Herramienta:</strong> ${herramienta}</div>
+    <div class="instruccion"><strong>🎯 Objetivo:</strong> ${objetivo}</div>
+    <h3>📋 Descripción</h3>
+    <p>${descripcion}</p>
+    <h3>📌 Contenido</h3>
+    <p><strong>${contenido}</strong></p>
+    <div class="pasos"><h4>🔹 Pasos</h4><ol><li>Accede a ${herramienta}.</li><li>Sigue las instrucciones del docente.</li><li>Registra tus respuestas o creaciones.</li><li>Comparte tu evidencia.</li></ol></div>
+    <div class="exito"><strong>✅ Criterio de éxito:</strong> El estudiante demuestra comprensión de ${contenido} mediante la actividad.</div>
+    <p style="margin-top: 2rem; font-size: 0.8rem; color: #6c7a8a; text-align: center;">Generado por ATPP V2.1</p>
+</div>
+</body>
+</html>`;
+        }
+
+        function generarActividades(herramientasSugeridas, finalidad, contenido, objetivo, duracion) {
+            if (!herramientasSugeridas.length) return null;
+            const seleccionadas = herramientasSugeridas.slice(0, 3);
+            const titulos = [
+                `Explorando ${contenido} con ${seleccionadas[0].nombre}`,
+                `Practicando ${contenido} con ${seleccionadas[1]?.nombre || seleccionadas[0].nombre}`,
+                `Creando con ${contenido} usando ${seleccionadas[2]?.nombre || seleccionadas[0].nombre}`
+            ];
+            const descs = [
+                `Los estudiantes usarán ${seleccionadas[0].nombre} para explorar y comprender ${contenido}. Interactuarán con la herramienta, realizarán observaciones y registrarán hallazgos.`,
+                `Mediante ${seleccionadas[1]?.nombre || seleccionadas[0].nombre}, los estudiantes practicarán y aplicarán conocimientos sobre ${contenido}. La retroalimentación inmediata facilita el aprendizaje autónomo.`,
+                `Con ${seleccionadas[2]?.nombre || seleccionadas[0].nombre}, los estudiantes crearán un producto (modelo, historia, mapa, etc.) relacionado con ${contenido}. Fomenta creatividad y síntesis.`
+            ];
+            return seleccionadas.map((h, i) => ({
+                titulo: titulos[i % titulos.length],
+                herramienta: h.nombre,
+                descripcion: descs[i % descs.length],
+                html: generarHTMLActividad(titulos[i % titulos.length], h.nombre, descs[i % descs.length], finalidad, contenido, objetivo, duracion)
+            }));
+        }
+
+        const finalidadEl = document.getElementById('finalidad');
+        const nivelEl = document.getElementById('nivel');
+        const campoEl = document.getElementById('campo');
+        const contenidoEl = document.getElementById('contenido');
+        const objetivoEl = document.getElementById('objetivo');
+        const duracionEl = document.getElementById('duracion');
+        const btnGenerar = document.getElementById('btnGenerar');
+        const btnCopiar = document.getElementById('btnCopiarTodo');
+        const feedback = document.getElementById('feedbackCopiar');
+        const listaEl = document.getElementById('listaHerramientas');
+        const actividadesEl = document.getElementById('actividadesContainer');
+        const promptEl = document.getElementById('promptOutput');
+
+        function actualizar() {
+            console.log('Generando...');
+            const finalidad = finalidadEl.value;
+            const nivel = nivelEl.value;
+            const campo = campoEl.value.trim() || 'general';
+            const contenido = contenidoEl.value.trim() || 'contenido específico';
+            const objetivo = objetivoEl.value.trim() || 'aprender el contenido';
+            const duracion = duracionEl.value || '10';
+
+            const sugeridas = sugerirHerramientas(finalidad, nivel);
+
+            if (!sugeridas.length) {
+                listaEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación. Prueba con otra finalidad o nivel.</div>';
+            } else {
+                let html = '';
+                sugeridas.slice(0, 5).forEach(h => {
+                    html += `<div class="tool-card"><span class="nombre">${h.nombre}</span> <span class="confianza">${h.confianza}</span> <span class="mini-badge">${h.familia}</span><br><span style="font-size:0.9rem;">${h.descripcion}</span><br><span style="font-size:0.85rem; color:#4a6a8a;">⚙️ ${h.como_funciona}</span></div>`;
+                });
+                listaEl.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
+            }
+
+            const actividades = generarActividades(sugeridas, finalidad, contenido, objetivo, duracion);
+            if (!actividades) {
+                actividadesEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">No hay herramientas suficientes para generar actividades.</div>';
+            } else {
+                let html = '';
+                actividades.forEach((act, idx) => {
+                    html += `
+                        <div style="margin-bottom:2rem;">
+                            <h4 style="color:#0b2b4a; margin:0.5rem 0 0.3rem;">📌 Actividad ${idx+1}: ${act.titulo}</h4>
+                            <div style="background:#f8fafc; border-radius:12px; padding:0.8rem 1.2rem; margin-bottom:0.5rem;">
+                                <strong>🛠️ Herramienta:</strong> ${act.herramienta}<br>
+                                <strong>📝 Descripción:</strong> ${act.descripcion}
+                            </div>
+                            <div class="actividad-html">${act.html}</div>
+                            <button class="btn secundario" style="padding:0.4rem 1.2rem; font-size:0.85rem;" onclick="copiarActividad(this)">📋 Copiar HTML</button>
+                        </div>
+                    `;
+                });
+                actividadesEl.innerHTML = html;
+            }
+
+            let herramientasTexto = sugeridas.map(h => `- ${h.nombre} (${h.confianza}): ${h.descripcion} | Funciona: ${h.como_funciona}`).join('\n');
+            const prompt = `ACTÚA COMO EXPERTO EN DISEÑO EDUCATIVO Y MICROLEARNING.
+
+CONTEXTO:
+- Finalidad: ${finalidad}
+- Nivel: ${nivel}
+- Campo: ${campo}
+- Contenido: ${contenido}
+- Objetivo: ${objetivo}
+- Duración: ${duracion} min
+
+HERRAMIENTAS INVESTIGADAS:
+${herramientasTexto}
+
+INSTRUCCIÓN:
+Diseña 3 actividades de microlearning (5-10 min) que sean viables, atractivas y alineadas al contenido. Para cada actividad incluye:
+1. Título.
+2. Herramienta principal (de las sugeridas o análoga).
+3. Descripción detallada de la dinámica (pasos).
+4. Propósito de aprendizaje.
+5. Criterio de éxito.
+
+Además, genera el código HTML completo y funcional para cada actividad (estilos embebidos, auto-contenido). El HTML debe ser claro, amigable y listo para usar.
+
+Formato: para cada actividad, primero la descripción en texto, luego el código HTML entre bloques \`\`\`html ... \`\`\`.`;
+            promptEl.value = prompt;
+            console.log('Generación completada.');
+        }
+
+        window.copiarActividad = function(btn) {
+            const bloque = btn.previousElementSibling;
+            if (bloque && bloque.classList.contains('actividad-html')) {
+                const texto = bloque.textContent;
+                navigator.clipboard.writeText(texto).then(() => {
+                    const orig = btn.textContent;
+                    btn.textContent = '✅ Copiado';
+                    setTimeout(() => btn.textContent = orig, 2000);
+                }).catch(() => {
+                    alert('Copia manual: selecciona el código y copia (Ctrl+C)');
+                });
+            }
+        };
+
+        btnCopiar.addEventListener('click', function() {
+            const texto = promptEl.value + '\n\n--- HTML de actividades ---\n\n' + 
+                Array.from(document.querySelectorAll('.actividad-html')).map(el => el.textContent).join('\n\n---\n\n');
+            navigator.clipboard.writeText(texto).then(() => {
+                feedback.classList.remove('oculto');
+                setTimeout(() => feedback.classList.add('oculto'), 3000);
+            }).catch(() => {
+                promptEl.select();
+                document.execCommand('copy');
+                feedback.classList.remove('oculto');
+                setTimeout(() => feedback.classList.add('oculto'), 3000);
+            });
+        });
+
+        btnGenerar.addEventListener('click', actualizar);
+        actualizar();
+        console.log('Dashboard listo.');
+    })();
+</script>
+</body>
+</html>
