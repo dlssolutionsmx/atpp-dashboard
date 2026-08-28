@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATPP V5.0 — Dashboard Curricular + PDA</title>
+    <title>ATPP V2.4 — Prompt con 3 niveles de dificultad</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem 1rem; margin: 0; }
-        .dashboard { max-width: 1200px; width: 100%; background: white; border-radius: 32px; padding: 2rem; box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
-        h1 { font-size: 1.8rem; margin: 0 0 0.2rem; color: #0b2b4a; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-        .badge-v5 { background: #2b7be4; color: white; font-size: 0.7rem; padding: 0.2rem 0.8rem; border-radius: 40px; }
+        body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem; margin: 0; }
+        .dashboard { max-width: 1100px; width: 100%; background: white; border-radius: 32px; padding: 2rem; box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        h1 { font-size: 1.8rem; margin: 0 0 0.2rem; color: #0b2b4a; display: flex; align-items: center; gap: 0.5rem; }
+        .badge-v2 { background: #2b7be4; color: white; font-size: 0.7rem; padding: 0.2rem 0.8rem; border-radius: 40px; }
         .sub { color: #3a5f7a; border-left: 4px solid #2b7be4; padding-left: 1rem; margin-bottom: 2rem; }
-        .seccion { background: #f8faff; border-radius: 20px; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid #e2ecf9; }
-        .seccion h2 { margin-top: 0; font-size: 1.1rem; color: #0b2b4a; border-bottom: 2px solid #d6e3f5; padding-bottom: 0.5rem; }
-        .fila { display: flex; flex-wrap: wrap; gap: 1.2rem; }
+        .fila { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-bottom: 1.8rem; }
         .campo { flex: 1 1 180px; min-width: 160px; }
         .campo.grande { flex: 2 1 300px; }
         label { display: block; font-weight: 600; font-size: 0.8rem; color: #1e3b5a; margin-bottom: 0.25rem; }
@@ -25,7 +23,7 @@
         .btn.secundario { background: #e5edf8; color: #1a3b5c; }
         .btn.secundario:hover { background: #d0ddee; }
         .resultado { background: #f0f5fe; border-radius: 24px; padding: 1.5rem 2rem; border: 1px solid #d6e3f5; margin-top: 1.5rem; }
-        .tool-card { background: white; border-radius: 16px; padding: 0.8rem 1.2rem; margin: 0.5rem 0; border: 1px solid #d6e3f5; }
+        .tool-card { background: white; border-radius: 16px; padding: 1rem 1.5rem; margin: 0.8rem 0; border: 1px solid #d6e3f5; }
         .tool-card .nombre { font-weight: 700; color: #0b2b4a; }
         .tool-card .confianza { background: #d9e6f7; border-radius: 40px; padding: 0.1rem 0.8rem; font-size: 0.7rem; font-weight: 600; margin-left: 0.5rem; }
         .copy-feedback { font-size: 0.9rem; color: #1e6b3b; background: #e0f2e6; padding: 0.4rem 1.2rem; border-radius: 60px; display: inline-block; }
@@ -33,137 +31,74 @@
         .separador { border-top: 2px dashed #bccfdf; margin: 1.5rem 0; }
         .instruccion { background: #e8f0fe; border-radius: 16px; padding: 1rem 1.5rem; border-left: 4px solid #2b7be4; margin: 0.8rem 0; }
         .mini-badge { background: #d0ddee; border-radius: 40px; padding: 0.1rem 0.6rem; font-size: 0.65rem; font-weight: 600; }
-        .campo-inferido { background: #e8f0fe; border-radius: 16px; padding: 0.5rem 1rem; border: 1px solid #ccd9e9; color: #1a3b5c; font-weight: 600; }
         #promptOutput { width: 100%; border: none; background: #f8fafc; border-radius: 12px; padding: 1rem; font-size: 0.9rem; line-height: 1.6; resize: vertical; min-height: 350px; font-family: inherit; }
-        .pda-selector { max-height: 200px; overflow-y: auto; border: 1px solid #ccd9e9; border-radius: 16px; padding: 0.3rem; background: white; }
-        .pda-option { padding: 0.5rem 0.8rem; cursor: pointer; border-radius: 12px; margin: 0.1rem 0; }
-        .pda-option:hover { background: #e8f0fe; }
-        .pda-option.seleccionado { background: #d0ddee; font-weight: 600; }
-        .pda-buscar { width: 100%; padding: 0.4rem 0.8rem; border: 1px solid #ccd9e9; border-radius: 16px; margin-bottom: 0.5rem; }
-        .flex { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
     </style>
 </head>
 <body>
 <div class="dashboard">
-    <h1>📘 ATPP V5.0 <span class="badge-v5">Currículo + PDA + 122 herramientas</span></h1>
-    <div class="sub">Selecciona Fase, Grado y Materia → Elige un PDA → Genera actividades con herramientas sugeridas</div>
+    <h1>📘 ATPP V2.4 <span class="badge-v2">3 Niveles</span></h1>
+    <div class="sub">Genera un prompt que ordena a la IA crear actividades con 3 niveles de dificultad integrados</div>
 
-    <!-- SECCIÓN CURRICULAR -->
-    <div class="seccion">
-        <h2>📚 Selección curricular</h2>
-        <div class="fila">
-            <div class="campo">
-                <label>Fase</label>
-                <select id="faseSelect">
-                    <option value="">Seleccionar</option>
-                    <option value="Fase 1">Fase 1 — Educación Inicial</option>
-                    <option value="Fase 2">Fase 2 — Preescolar (1° a 3°)</option>
-                    <option value="Fase 3">Fase 3 — Primaria (1° a 3°)</option>
-                    <option value="Fase 4">Fase 4 — Primaria (4° a 6°)</option>
-                    <option value="Fase 5">Fase 5 — Secundaria (1° a 2°)</option>
-                    <option value="Fase 6">Fase 6 — Secundaria (3°)</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Grado</label>
-                <select id="gradoSelect">
-                    <option value="">No especificado</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Materia / Asignatura</label>
-                <select id="materiaSelect">
-                    <option value="">Seleccionar</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Campo formativo (inferido)</label>
-                <div class="campo-inferido" id="campoFormativoDisplay">(selecciona materia)</div>
-            </div>
+    <div class="fila">
+        <div class="campo">
+            <label>🎯 Finalidad</label>
+            <select id="finalidad">
+                <option value="activar">Activar / sondear</option>
+                <option value="practicar">Practicar / repasar</option>
+                <option value="evaluar">Evaluar / retroalimentar</option>
+                <option value="crear">Crear / producir</option>
+                <option value="colaborar">Colaborar / discutir</option>
+                <option value="explorar">Explorar / descubrir</option>
+                <option value="representar" selected>Representar / modelar</option>
+                <option value="reflexionar">Reflexionar / argumentar</option>
+                <option value="organizar">Organizar / secuenciar</option>
+            </select>
         </div>
-        <div class="fila" style="margin-top:1rem;">
-            <div class="campo grande">
-                <label>Buscar PDA por texto (opcional)</label>
-                <input type="text" id="pdaBuscar" placeholder="Escribe palabras clave..." class="pda-buscar">
-            </div>
+        <div class="campo">
+            <label>📚 Nivel</label>
+            <select id="nivel">
+                <option value="Primaria (3°-6°)">Primaria (3°-6°)</option>
+                <option value="Secundaria (1°-3°)" selected>Secundaria (1°-3°)</option>
+                <option value="Media superior (preparatoria)">Media superior</option>
+                <option value="Profesional / docente">Profesional / docente</option>
+            </select>
         </div>
-        <div class="fila">
-            <div class="campo grande">
-                <label>Selecciona un PDA</label>
-                <div id="pdaLista" class="pda-selector" style="max-height:200px;">
-                    <div style="padding:0.5rem; color:#3f5f7a;">Carga los PDAs...</div>
-                </div>
-            </div>
-        </div>
-        <div class="fila" style="margin-top:1rem;">
-            <div class="campo grande">
-                <label>O escribe el PDA manualmente</label>
-                <textarea id="pdaManual" placeholder="Escribe aquí el PDA si no está en la lista..."></textarea>
-            </div>
+        <div class="campo">
+            <label>📖 Campo / asignatura</label>
+            <input type="text" id="campo" placeholder="Ej. Matemáticas" value="Matemáticas">
         </div>
     </div>
 
-    <!-- SECCIÓN DISEÑO DE ACTIVIDAD -->
-    <div class="seccion">
-        <h2>✏️ Diseño de la actividad</h2>
-        <div class="fila">
-            <div class="campo">
-                <label>🎯 Finalidad</label>
-                <select id="finalidad">
-                    <option value="activar">Activar / sondear</option>
-                    <option value="practicar">Practicar / repasar</option>
-                    <option value="evaluar">Evaluar / retroalimentar</option>
-                    <option value="crear">Crear / producir</option>
-                    <option value="colaborar">Colaborar / discutir</option>
-                    <option value="explorar">Explorar / descubrir</option>
-                    <option value="representar" selected>Representar / modelar</option>
-                    <option value="reflexionar">Reflexionar / argumentar</option>
-                    <option value="organizar">Organizar / secuenciar</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>📚 Nivel educativo</label>
-                <select id="nivel">
-                    <option value="Primaria (3°-6°)">Primaria (3°-6°)</option>
-                    <option value="Secundaria (1°-3°)" selected>Secundaria (1°-3°)</option>
-                    <option value="Media superior (preparatoria)">Media superior</option>
-                    <option value="Profesional / docente">Profesional / docente</option>
-                </select>
-            </div>
-            <div class="campo grande">
-                <label>📖 Contenido / tema</label>
-                <input type="text" id="contenido" placeholder="Se llenará con el PDA seleccionado" value="Usar PDA como referencia">
-            </div>
+    <div class="fila">
+        <div class="campo grande">
+            <label>✏️ Contenido / tema específico</label>
+            <textarea id="contenido" placeholder="Ej. Ecuaciones lineales">Ecuaciones lineales</textarea>
         </div>
-        <div class="fila">
-            <div class="campo grande">
-                <label>🎯 Intención pedagógica</label>
-                <input type="text" id="objetivo" placeholder="Se llenará con el PDA seleccionado" value="Usar PDA de referencia">
-            </div>
-            <div class="campo">
-                <label>⏱️ Duración (min)</label>
-                <input type="number" id="duracion" value="10" min="3" max="20">
-            </div>
+        <div class="campo">
+            <label>🎯 Objetivo</label>
+            <input type="text" id="objetivo" placeholder="Ej. Resolver ecuaciones" value="Resolver ecuaciones de primer grado con una incógnita">
+        </div>
+        <div class="campo">
+            <label>⏱️ Duración (min)</label>
+            <input type="number" id="duracion" value="10" min="3" max="20">
         </div>
     </div>
 
-    <!-- BOTONES -->
     <div class="botonera">
-        <button class="btn" id="btnGenerar">🚀 Generar prompt</button>
+        <button class="btn" id="btnGenerar">🚀 Generar prompt con niveles</button>
         <button class="btn secundario" id="btnCopiarTodo">📋 Copiar prompt</button>
         <span id="feedbackCopiar" class="oculto copy-feedback">✅ Copiado</span>
     </div>
 
-    <!-- RESULTADO -->
     <div id="resultadoPanel" class="resultado">
-        <h3>🔍 Herramientas sugeridas (filtradas por materia y finalidad)</h3>
+        <h3>🔍 Herramientas sugeridas (referencia)</h3>
         <div id="listaHerramientas"><span style="color:#3f5f7a;">Haz clic en "Generar"</span></div>
         <div class="separador"></div>
-        <h3>🧠 Prompt para IA (con 3 niveles de dificultad)</h3>
+        <h3>🧠 Prompt mejorado (con 3 niveles de dificultad)</h3>
         <textarea id="promptOutput" readonly>Aquí aparecerá el prompt.</textarea>
         <div class="separador"></div>
         <div class="instruccion" style="border-left-color:#1e7b4a;">
-            <strong>💡 Instrucción:</strong> Copia el prompt, pégalo en ChatGPT, Claude o Gemini, y la IA te devolverá 3 actividades con HTML, cada una con 3 niveles de dificultad.
+            <strong>💡 Instrucción para el maestro:</strong> Copia este prompt y pégalo en ChatGPT, Claude o Gemini. La IA te devolverá 3 actividades, cada una con 3 niveles de dificultad (fácil, medio, difícil) dentro del HTML. Luego solo copia el HTML y ábrelo en tu navegador.
         </div>
     </div>
 </div>
@@ -172,330 +107,157 @@
     (function() {
         "use strict";
 
-        // ------------------------------------------------------------
-        // DATOS DE HERRAMIENTAS (122 apps) – COMPLETO
-        // ------------------------------------------------------------
+        // Base de datos de herramientas (solo para referencia)
         const herramientas = [
-            // Aquí van las 122 filas de la matriz consolidadas.
-            // Como son muchas, he incluido solo algunas de ejemplo.
-            // DEBES REEMPLAZAR ESTE ARRAY CON EL COMPLETO (APP-01 a APP-122).
-            // Puedes obtenerlo de la hoja "Matriz Apps" del Excel.
-            // Por brevedad, pongo unas pocas para que la estructura sea clara.
-            { id: 'APP-01', aplicacion: 'Kahoot!', familia: 'Evaluación y gamificación', confianza: 'Media-alta', funciones: 'Activar; practicar; evaluar; retroalimentar', campo: 'Todos', dirigido: 'Alumnos; maestros' },
-            { id: 'APP-02', aplicacion: 'Quizizz', familia: 'Evaluación y lecciones interactivas', confianza: 'Media-alta', funciones: 'Activar; practicar; evaluar; retroalimentar', campo: 'Todos', dirigido: 'Alumnos; maestros' },
-            // ... (poner todas las 122)
+            { id: 'APP-08', nombre: 'Padlet', familia: 'Muro colaborativo', confianza: 'Alta', descripcion: 'Muro digital para publicar texto, imágenes, audio y video.', como_funciona: 'El docente crea un muro y comparte enlace; los alumnos publican sin cuenta.', finalidades: ['colaborar','organizar','crear','reflexionar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-04', nombre: 'Educaplay', familia: 'Actividades multimedia', confianza: 'Media-alta', descripcion: 'Crea crucigramas, mapas, juegos de memoria, etc.', como_funciona: 'El docente diseña una actividad y comparte enlace; los alumnos resuelven en línea.', finalidades: ['practicar','evaluar','crear'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-12', nombre: 'Google Earth', familia: 'Visualización 3D', confianza: 'Alta', descripcion: 'Globo virtual con imágenes satelitales y recorridos guiados.', como_funciona: 'Se navega, se miden distancias y se crean proyectos con marcadores.', finalidades: ['explorar','representar','contextualizar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-13', nombre: 'GeoGebra', familia: 'Matemáticas dinámicas', confianza: 'Alta', descripcion: 'Geometría, álgebra, cálculo y gráficas interactivas.', como_funciona: 'Manipula objetos matemáticos y observa cambios en tiempo real.', finalidades: ['representar','modelar','explorar','practicar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-14', nombre: 'Desmos', familia: 'Matemáticas interactivas', confianza: 'Alta', descripcion: 'Calculadora gráfica y actividades matemáticas.', como_funciona: 'Introduce funciones, modifica parámetros y observa gráficas.', finalidades: ['representar','modelar','explorar','practicar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-18', nombre: 'PhET', familia: 'Simulaciones STEM', confianza: 'Alta', descripcion: 'Simulaciones de física, química, biología y matemáticas.', como_funciona: 'Explora manipulando variables y observando fenómenos.', finalidades: ['explorar','experimentar','representar','practicar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-21', nombre: 'Scratch', familia: 'Programación visual', confianza: 'Alta', descripcion: 'Programación por bloques para crear historias y juegos.', como_funciona: 'Arrastra bloques para programar personajes y escenas.', finalidades: ['crear','representar','colaborar','secuenciar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-22', nombre: 'Tinkercad', familia: 'Diseño 3D', confianza: 'Alta', descripcion: 'Diseño 3D, circuitos y programación por bloques.', como_funciona: 'Crea modelos 3D o circuitos virtuales combinando formas.', finalidades: ['crear','modelar','prototipar','representar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-29', nombre: 'StoryJumper', familia: 'Creación de libros', confianza: 'Alta', descripcion: 'Crea libros digitales ilustrados.', como_funciona: 'Usa plantillas o sube imágenes; el libro se comparte por enlace.', finalidades: ['crear','narrar','colaborar','comunicar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)'] },
+            { id: 'APP-30', nombre: 'CommonLit', familia: 'Comprensión lectora', confianza: 'Alta', descripcion: 'Biblioteca digital con textos y preguntas de comprensión.', como_funciona: 'Lee un texto y responde preguntas; el docente ve el progreso.', finalidades: ['leer','comprender','analizar','evaluar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-36', nombre: 'iCivics', familia: 'Civismo', confianza: 'Alta', descripcion: 'Juegos sobre educación cívica y gobierno.', como_funciona: 'Simula decisiones como legislador o juez.', finalidades: ['comprender','decidir','argumentar','evaluar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-16', nombre: 'iNaturalist', familia: 'Ciencia ciudadana', confianza: 'Alta', descripcion: 'Registro de biodiversidad con fotos y ubicación.', como_funciona: 'Fotografía una especie, súbela y la comunidad ayuda a identificarla.', finalidades: ['explorar','investigar','colaborar','registrar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-46', nombre: 'Kinovea', familia: 'Análisis deportivo', confianza: 'Alta', descripcion: 'Análisis de video para deportes, con anotaciones y mediciones.', como_funciona: 'Graba un movimiento, analiza en cámara lenta y compara.', finalidades: ['observar','analizar','comparar','retroalimentar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-01', nombre: 'Kahoot!', familia: 'Evaluación gamificada', confianza: 'Media-alta', descripcion: 'Quizzes en tiempo real con puntuación.', como_funciona: 'Crea un quiz, los alumnos responden desde sus dispositivos.', finalidades: ['evaluar','practicar','activar','retroalimentar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-02', nombre: 'Quizizz', familia: 'Evaluación y lecciones', confianza: 'Media-alta', descripcion: 'Quizzes asíncronos con retroalimentación inmediata.', como_funciona: 'Los alumnos responden a su ritmo y ven explicaciones.', finalidades: ['evaluar','practicar','activar','retroalimentar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-06', nombre: 'Mentimeter', familia: 'Presentación interactiva', confianza: 'Alta', descripcion: 'Encuestas, nubes de palabras y quizzes en presentaciones.', como_funciona: 'El presentador proyecta preguntas y la audiencia responde en vivo.', finalidades: ['activar','sondear','evaluar','reflexionar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)','Profesional / docente'] },
+            { id: 'APP-31', nombre: 'TimelineJS', familia: 'Línea de tiempo', confianza: 'Alta', descripcion: 'Crea líneas de tiempo interactivas desde Google Sheets.', como_funciona: 'Llena una plantilla en Sheets, publica y obtén un enlace interactivo.', finalidades: ['organizar','secuenciar','narrar','contextualizar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-32', nombre: 'ArcGIS Online', familia: 'Cartografía SIG', confianza: 'Alta', descripcion: 'Crea mapas interactivos con capas de datos.', como_funciona: 'Agrega capas, modifica estilos y comparte por enlace.', finalidades: ['explorar','mapear','localizar','analizar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] }
         ];
 
-        // ------------------------------------------------------------
-        // DATOS DE PDA (1,742 registros) – REEMPLAZAR CON EL JSON COMPLETO
-        // ------------------------------------------------------------
-        const pdaRecords = [
-            // COLOCA AQUÍ EL JSON COMPLETO DE pda_matrix_internal.json
-            // Ejemplo:
-            // { "pda_id": "PDA-0001", "fase": "Fase 2", "campo_formativo": "De lo Humano y lo Comunitario", "grado": ["Cuarto grado"], "contenido": "Construcción de la identidad personal...", "pda_text": "Distingue semejanzas y diferencias..." },
-            // ... hasta 1742 registros
-        ];
-
-        // ------------------------------------------------------------
-        // EXTRACCIÓN DE DATOS ÚNICOS
-        // ------------------------------------------------------------
-        function extraerMaterias(herramientas) {
-            const set = new Set();
-            herramientas.forEach(h => {
-                const campo = h.campo || '';
-                const partes = campo.split(/[;,/]/).map(s => s.trim()).filter(s => s && s !== 'Todos');
-                partes.forEach(p => set.add(p));
+        function sugerirHerramientas(finalidad, nivel) {
+            return herramientas.filter(h => {
+                const okFinalidad = h.finalidades.some(f => f === finalidad);
+                const okNivel = h.nivel.some(n => n === nivel) || h.nivel.includes('Todos');
+                return okFinalidad && okNivel;
+            }).sort((a,b) => {
+                const orden = {'Alta':1, 'Media-alta':2, 'Media':3};
+                return (orden[a.confianza]||99) - (orden[b.confianza]||99);
             });
-            return Array.from(set).sort();
         }
 
-        function extraerCampoFormativoDeMateria(materia, herramientas) {
-            for (let h of herramientas) {
-                const campo = h.campo || '';
-                const partes = campo.split(/[;,/]/).map(s => s.trim());
-                if (partes.some(p => p === materia)) {
-                    return partes[0] || '';
-                }
-            }
-            return '';
-        }
-
-        // Grados posibles de la matriz de PDAs
-        function extraerGradosDePDA(pdaRecords) {
-            const set = new Set();
-            pdaRecords.forEach(p => {
-                if (p.grado && Array.isArray(p.grado)) {
-                    p.grado.forEach(g => {
-                        // Normalizar: quitar "grado" y mayúsculas
-                        const limpio = g.replace(/grado/i, '').trim();
-                        if (limpio) set.add(limpio);
-                    });
-                }
-            });
-            // Ordenar de manera lógica (1°, 2°, ...)
-            const orden = { 'Primero': 1, 'Segundo': 2, 'Tercero': 3, 'Cuarto': 4, 'Quinto': 5, 'Sexto': 6, 'Séptimo': 7, 'Octavo': 8, 'Noveno': 9, 'Décimo': 10, 'Undécimo': 11, 'Duodécimo': 12 };
-            return Array.from(set).sort((a, b) => (orden[a] || 99) - (orden[b] || 99));
-        }
-
-        // ------------------------------------------------------------
-        // DOM ELEMENTS
-        // ------------------------------------------------------------
-        const faseSelect = document.getElementById('faseSelect');
-        const gradoSelect = document.getElementById('gradoSelect');
-        const materiaSelect = document.getElementById('materiaSelect');
-        const campoFormativoDisplay = document.getElementById('campoFormativoDisplay');
-        const pdaBuscar = document.getElementById('pdaBuscar');
-        const pdaLista = document.getElementById('pdaLista');
-        const pdaManual = document.getElementById('pdaManual');
-        const finalidadSelect = document.getElementById('finalidad');
-        const nivelSelect = document.getElementById('nivel');
-        const contenidoInput = document.getElementById('contenido');
-        const objetivoInput = document.getElementById('objetivo');
-        const duracionInput = document.getElementById('duracion');
+        // Elementos
+        const finalidadEl = document.getElementById('finalidad');
+        const nivelEl = document.getElementById('nivel');
+        const campoEl = document.getElementById('campo');
+        const contenidoEl = document.getElementById('contenido');
+        const objetivoEl = document.getElementById('objetivo');
+        const duracionEl = document.getElementById('duracion');
         const btnGenerar = document.getElementById('btnGenerar');
         const btnCopiar = document.getElementById('btnCopiarTodo');
         const feedback = document.getElementById('feedbackCopiar');
-        const listaHerramientas = document.getElementById('listaHerramientas');
-        const promptOutput = document.getElementById('promptOutput');
+        const listaEl = document.getElementById('listaHerramientas');
+        const promptEl = document.getElementById('promptOutput');
 
-        // ------------------------------------------------------------
-        // INICIALIZAR SELECTORES
-        // ------------------------------------------------------------
-        function initSelectores() {
-            // Materias
-            const materias = extraerMaterias(herramientas);
-            materiaSelect.innerHTML = '<option value="">Seleccionar</option>';
-            materias.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                opt.textContent = m;
-                materiaSelect.appendChild(opt);
-            });
+        function actualizar() {
+            const finalidad = finalidadEl.value;
+            const nivel = nivelEl.value;
+            const campo = campoEl.value.trim() || 'general';
+            const contenido = contenidoEl.value.trim() || 'contenido específico';
+            const objetivo = objetivoEl.value.trim() || 'aprender el contenido';
+            const duracion = duracionEl.value || '10';
 
-            // Grados (desde PDAs)
-            const grados = extraerGradosDePDA(pdaRecords);
-            gradoSelect.innerHTML = '<option value="">No especificado</option>';
-            grados.forEach(g => {
-                const opt = document.createElement('option');
-                opt.value = g;
-                opt.textContent = g;
-                gradoSelect.appendChild(opt);
-            });
-        }
+            const sugeridas = sugerirHerramientas(finalidad, nivel);
 
-        // Actualizar campo formativo al cambiar materia
-        function actualizarCampoFormativo() {
-            const materia = materiaSelect.value;
-            if (!materia) {
-                campoFormativoDisplay.textContent = '(selecciona materia)';
-                return;
-            }
-            const cf = extraerCampoFormativoDeMateria(materia, herramientas);
-            campoFormativoDisplay.textContent = cf || '(no identificado)';
-        }
-
-        // ------------------------------------------------------------
-        // FILTRAR Y MOSTRAR PDAS
-        // ------------------------------------------------------------
-        function filtrarPDAs() {
-            const fase = faseSelect.value;
-            const grado = gradoSelect.value;
-            const materia = materiaSelect.value;
-            const campoFormativo = campoFormativoDisplay.textContent;
-            const busqueda = pdaBuscar.value.toLowerCase().trim();
-
-            let filtrados = pdaRecords;
-
-            // Filtro por fase
-            if (fase) {
-                filtrados = filtrados.filter(p => p.fase === fase);
-            }
-
-            // Filtro por grado
-            if (grado) {
-                filtrados = filtrados.filter(p => {
-                    if (!p.grado || !Array.isArray(p.grado)) return false;
-                    return p.grado.some(g => g.includes(grado) || g === grado);
-                });
-            }
-
-            // Filtro por campo formativo (si se infiere de la materia)
-            if (materia && campoFormativo && campoFormativo !== '(selecciona materia)' && campoFormativo !== '(no identificado)') {
-                filtrados = filtrados.filter(p => p.campo_formativo === campoFormativo);
-            }
-
-            // Filtro por búsqueda de texto
-            if (busqueda) {
-                filtrados = filtrados.filter(p =>
-                    p.pda_text.toLowerCase().includes(busqueda) ||
-                    p.contenido.toLowerCase().includes(busqueda) ||
-                    p.pda_id.toLowerCase().includes(busqueda)
-                );
-            }
-
-            // Mostrar en la lista
-            pdaLista.innerHTML = '';
-            if (filtrados.length === 0) {
-                pdaLista.innerHTML = '<div style="padding:0.5rem; color:#a03;">No hay PDAs que coincidan con los filtros.</div>';
-                return;
-            }
-
-            filtrados.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'pda-option';
-                div.textContent = `${p.pda_id} — ${p.pda_text.substring(0, 80)}...`;
-                div.title = p.pda_text;
-                div.dataset.pdaId = p.pda_id;
-                div.addEventListener('click', function() {
-                    // Seleccionar PDA
-                    document.querySelectorAll('.pda-option').forEach(el => el.classList.remove('seleccionado'));
-                    this.classList.add('seleccionado');
-                    // Rellenar contenido y objetivo
-                    contenidoInput.value = p.contenido || p.pda_text;
-                    objetivoInput.value = p.pda_text;
-                    // También poner en el campo manual
-                    pdaManual.value = p.pda_text;
-                });
-                pdaLista.appendChild(div);
-            });
-        }
-
-        // ------------------------------------------------------------
-        // GENERAR PROMPT
-        // ------------------------------------------------------------
-        function generarPrompt() {
-            const fase = faseSelect.value;
-            const grado = gradoSelect.value;
-            const materia = materiaSelect.value;
-            const campoFormativo = campoFormativoDisplay.textContent;
-            const pdaSeleccionado = pdaManual.value.trim() || contenidoInput.value.trim() || 'No especificado';
-            const finalidad = finalidadSelect.value;
-            const nivel = nivelSelect.value;
-            const contenido = contenidoInput.value.trim() || 'contenido específico';
-            const objetivo = objetivoInput.value.trim() || 'aprender el contenido';
-            const duracion = duracionInput.value || '10';
-
-            // Filtrar herramientas
-            const sugeridas = herramientas.filter(h => {
-                let okMateria = true;
-                if (materia) {
-                    const campos = h.campo ? h.campo.split(/[;,/]/).map(s => s.trim()) : [];
-                    okMateria = campos.some(c => c === materia) || campos.includes('Todos');
-                }
-                let okFinalidad = true;
-                if (finalidad) {
-                    const funciones = h.funciones ? h.funciones.split(/[;,]/).map(s => s.trim()) : [];
-                    okFinalidad = funciones.some(f => f === finalidad);
-                }
-                let okNivel = true;
-                if (nivel) {
-                    const dirigido = h.dirigido || '';
-                    okNivel = dirigido.includes('Alumnos') || dirigido.includes('Maestros') || dirigido.includes('Todos');
-                }
-                return okMateria && okFinalidad && okNivel;
-            });
-
-            const ordenConfianza = { 'Alta': 1, 'Media-alta': 2, 'Media': 3, 'Media-baja': 4, 'Baja-media': 5 };
-            sugeridas.sort((a, b) => (ordenConfianza[a.confianza] || 99) - (ordenConfianza[b.confianza] || 99));
-
-            // Mostrar herramientas
+            // Mostrar herramientas (referencia)
             if (!sugeridas.length) {
-                listaHerramientas.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación.</div>';
+                listaEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación.</div>';
             } else {
                 let html = '';
                 sugeridas.slice(0, 5).forEach(h => {
-                    html += `<div class="tool-card"><span class="nombre">${h.aplicacion}</span> <span class="confianza">${h.confianza}</span> <span class="mini-badge" style="margin-left:0.5rem;">${h.familia || ''}</span><br><span style="font-size:0.9rem;">${h.funciones || ''}</span></div>`;
+                    html += `<div class="tool-card"><span class="nombre">${h.nombre}</span> <span class="confianza">${h.confianza}</span> <span class="mini-badge">${h.familia}</span><br><span style="font-size:0.9rem;">${h.descripcion}</span><br><span style="font-size:0.85rem; color:#4a6a8a;">⚙️ ${h.como_funciona}</span></div>`;
                 });
-                listaHerramientas.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
+                listaEl.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
             }
 
-            // Construir prompt
-            const herramientasTexto = sugeridas.slice(0, 10).map(h => 
-                `- ${h.aplicacion} (${h.confianza}): ${h.funciones || ''}`
+            // --- PROMPT MEJORADO CON 3 NIVELES DE DIFICULTAD ---
+            const herramientasTexto = sugeridas.map(h => 
+                `- ${h.nombre} (${h.confianza}): ${h.descripcion}. Cómo funciona: ${h.como_funciona}`
             ).join('\n');
 
-            const esMatematicas = /matem|álgebra|cálculo|geometría|ecuaci|función|gráfic|trigonometría/i.test(materia + ' ' + contenido);
+            const esMatematicas = /matem|álgebra|cálculo|geometría|ecuaci|función|gráfic|trigonometría/i.test(campo + ' ' + contenido);
             const mathJaxTag = esMatematicas ? 
                 `<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>` : '';
 
-            let curricular = '';
-            if (fase) curricular += `- Fase: ${fase}\n`;
-            if (grado) curricular += `- Grado: ${grado}\n`;
-            if (materia) curricular += `- Materia/Asignatura: ${materia}\n`;
-            if (campoFormativo && campoFormativo !== '(selecciona materia)' && campoFormativo !== '(no identificado)') 
-                curricular += `- Campo formativo: ${campoFormativo}\n`;
-            if (pdaSeleccionado) curricular += `- PDA (texto): "${pdaSeleccionado}"\n`;
+            const prompt = `ACTÚA COMO UN EXPERTO EN DISEÑO DE ACTIVIDADES EDUCATIVAS Y DESARROLLO WEB.  
 
-            const prompt = `ACTÚA COMO UN EXPERTO EN DISEÑO CURRICULAR Y MICROLEARNING.
+**CONTEXTO PEDAGÓGICO:**  
+- Finalidad: ${finalidad}  
+- Nivel: ${nivel}  
+- Campo/Asignatura: ${campo}  
+- Contenido específico: ${contenido}  
+- Objetivo de aprendizaje: ${objetivo}  
+- Duración estimada: ${duracion} minutos  
 
-**CONTEXTO CURRICULAR (referencia para la alineación):**
-${curricular || 'No se ha especificado contexto curricular.'}
+**HERRAMIENTAS SUGERIDAS (investigadas):**  
+${herramientasTexto}  
 
-**CONTEXTO DE LA ACTIVIDAD:**
-- Finalidad: ${finalidad}
-- Nivel educativo: ${nivel}
-- Contenido específico: ${contenido}
-- Intención pedagógica: ${objetivo}
-- Duración estimada: ${duracion} minutos
+**INSTRUCCIONES DETALLADAS:**  
 
-**HERRAMIENTAS SUGERIDAS (investigadas):**
-${herramientasTexto || 'No hay herramientas específicas, pero puedes usar cualquier herramienta educativa adecuada.'}
+Diseña **3 actividades de microlearning** (cada una de 5 a 10 minutos). Para cada actividad, **debes incluir 3 niveles de dificultad** (principiante, intermedio, avanzado) que permitan atender la diversidad del aula. Los niveles deben diferenciarse en:  
+- Grado de apoyo o andamiaje (más pistas en el nivel bajo).  
+- Complejidad de las tareas (ejercicios más simples vs. más complejos).  
+- Profundidad de la reflexión o aplicación.  
 
-**INSTRUCCIONES OBLIGATORIAS:**
+**Estructura de cada actividad:**  
+1. Título y herramienta principal (elige una de las sugeridas o análoga).  
+2. Descripción general de la actividad.  
+3. **Tres variantes (niveles)**, cada una con:  
+   - Instrucciones específicas para ese nivel.  
+   - Ejemplos o ejercicios concretos.  
+   - Criterio de éxito adaptado.  
 
-1. Diseña **3 actividades de microlearning** (cada una de 5 a 10 minutos) que sean prácticas, atractivas y alineadas con el contenido y el nivel indicado.
-2. Para **cada actividad**, debes incluir **3 niveles de dificultad** (principiante, intermedio, avanzado) que permitan atender la diversidad del aula. Los niveles deben diferenciarse en:
-   - Grado de apoyo o andamiaje (más pistas en el nivel bajo).
-   - Complejidad de las tareas (ejercicios más simples vs. más complejos).
-   - Profundidad de la reflexión o aplicación.
-3. Para cada actividad, proporciona:
-   - Título.
-   - Herramienta principal (de las sugeridas o análoga).
-   - Descripción general.
-   - Las tres variantes (niveles) con instrucciones específicas, ejemplos y criterio de éxito adaptado.
-4. **Además, para cada actividad genera un código HTML completo, autocontenido y listo para usar**, que:
-   - Sea visualmente atractivo y responsivo.
-   - Incluya todos los estilos CSS embebidos.
-   - Muestre claramente los tres niveles (puedes usar pestañas, acordeones o secciones).
-   - Si el contenido es matemático o científico, incluya la librería MathJax para renderizar ecuaciones.
-   - Incluya una sección que muestre el PDA de referencia (si se proporcionó) y explique cómo la actividad lo aborda.
-5. Si se proporcionó un PDA, la actividad debe estar explícitamente alineada con él.
+**ADEMÁS, PARA CADA ACTIVIDAD DEBES GENERAR UN CÓDIGO HTML COMPLETO, AUTOCONTENIDO Y LISTO PARA USAR,** que:  
+- Sea visualmente atractivo (colores suaves, tipografía legible, espaciado adecuado).  
+- Incluya todos los estilos CSS dentro del mismo archivo.  
+- Sea responsivo (adaptable a móviles y tablets).  
+- Muestre claramente los tres niveles (puedes usar pestañas, acordeones o secciones separadas).  
+- Si el contenido es matemático o científico, incluye la librería MathJax (como se indica) para renderizar ecuaciones.  
+- Si la actividad implica gráficos, usa SVG o Canvas dentro del HTML.  
 
-**FORMATO DE SALIDA:**
-Para cada actividad, primero la descripción en texto plano (con los tres niveles), y luego el bloque de código HTML entre etiquetas \`\`\`html ... \`\`\`.
+**REQUISITO OBLIGATORIO DE MATHJAX (si aplica):**  
+Añade en el <head>:  
+${mathJaxTag ? `<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>` : 'No aplica.'}  
+Y escribe las ecuaciones entre \\( ... \\) (inline) o \\[ ... \\] (display).  
 
-**NOTA PARA EL MAESTRO:** Copia este prompt y pégalo en ChatGPT, Claude o Gemini. La IA generará actividades diferenciadas con HTML funcional.`;
+**EJEMPLO DE ESTRUCTURA HTML (puedes adaptarlo):**  
+\`\`\`html  
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Actividad: [título]</title>  
+    <style>  
+        /* Estilos CSS */  
+        .nivel { display: none; }  
+        .nivel.activo { display: block; }  
+        /* Botones para cambiar de nivel */  
+    </style>  
+    ${mathJaxTag}  
+</head>  
+<body>  
+    <!-- Contenido con tres niveles -->  
+</body>  
+</html>  
+\`\`\`  
 
-            promptOutput.value = prompt;
+**ENTREGA FINAL:**  
+Proporciona las 3 actividades en texto plano (con sus descripciones y niveles) y, después de cada una, el bloque de código HTML completo entre etiquetas \`\`\`html ... \`\`\`. Asegúrate de que el HTML sea funcional y que los tres niveles sean fácilmente accesibles para el maestro y los estudiantes.  
+
+**NOTA PARA EL MAESTRO:**  
+Este prompt está diseñado para generar actividades diferenciadas. Copia el HTML resultante y ábrelo en tu navegador. Si usas CodePen, puedes obtener un enlace público para compartir.`;
+
+            promptEl.value = prompt;
         }
 
-        // ------------------------------------------------------------
-        // EVENTOS
-        // ------------------------------------------------------------
-        faseSelect.addEventListener('change', filtrarPDAs);
-        gradoSelect.addEventListener('change', filtrarPDAs);
-        materiaSelect.addEventListener('change', function() {
-            actualizarCampoFormativo();
-            filtrarPDAs();
-        });
-        pdaBuscar.addEventListener('input', filtrarPDAs);
-
-        // Si se escribe manualmente, actualizar contenido/objetivo
-        pdaManual.addEventListener('input', function() {
-            const txt = this.value.trim();
-            if (txt) {
-                contenidoInput.value = txt;
-                objetivoInput.value = txt;
-            } else {
-                contenidoInput.value = 'Usar PDA como referencia';
-                objetivoInput.value = 'Usar PDA de referencia';
-            }
-        });
-
-        btnGenerar.addEventListener('click', generarPrompt);
-
+        // Copiar prompt
         btnCopiar.addEventListener('click', function() {
-            const texto = promptOutput.value;
+            const texto = promptEl.value;
             if (!texto || texto === 'Aquí aparecerá el prompt.') {
                 alert('Primero haz clic en "Generar".');
                 return;
@@ -504,22 +266,15 @@ Para cada actividad, primero la descripción en texto plano (con los tres nivele
                 feedback.classList.remove('oculto');
                 setTimeout(() => feedback.classList.add('oculto'), 3000);
             }).catch(() => {
-                promptOutput.select();
+                promptEl.select();
                 document.execCommand('copy');
                 feedback.classList.remove('oculto');
                 setTimeout(() => feedback.classList.add('oculto'), 3000);
             });
         });
 
-        // ------------------------------------------------------------
-        // INICIALIZAR
-        // ------------------------------------------------------------
-        initSelectores();
-        actualizarCampoFormativo();
-        filtrarPDAs();
-        generarPrompt();
-
-        console.log('ATPP V5.0 cargado con ' + herramientas.length + ' herramientas y ' + pdaRecords.length + ' PDAs.');
+        btnGenerar.addEventListener('click', actualizar);
+        actualizar();
     })();
 </script>
 </body>
