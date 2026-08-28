@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATPP V2.3 — Prompts reforzados</title>
+    <title>ATPP V2.4 — Prompt con 3 niveles de dificultad</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem; margin: 0; }
@@ -26,19 +26,18 @@
         .tool-card { background: white; border-radius: 16px; padding: 1rem 1.5rem; margin: 0.8rem 0; border: 1px solid #d6e3f5; }
         .tool-card .nombre { font-weight: 700; color: #0b2b4a; }
         .tool-card .confianza { background: #d9e6f7; border-radius: 40px; padding: 0.1rem 0.8rem; font-size: 0.7rem; font-weight: 600; margin-left: 0.5rem; }
-        .actividad-html { background: #1a1e2a; color: #e8edf5; border-radius: 16px; padding: 1.2rem 1.5rem; margin: 1rem 0; font-family: 'Courier New', monospace; font-size: 0.85rem; white-space: pre-wrap; max-height: 400px; overflow-y: auto; border: 1px solid #3a4a5a; }
         .copy-feedback { font-size: 0.9rem; color: #1e6b3b; background: #e0f2e6; padding: 0.4rem 1.2rem; border-radius: 60px; display: inline-block; }
         .oculto { display: none; }
         .separador { border-top: 2px dashed #bccfdf; margin: 1.5rem 0; }
         .instruccion { background: #e8f0fe; border-radius: 16px; padding: 1rem 1.5rem; border-left: 4px solid #2b7be4; margin: 0.8rem 0; }
         .mini-badge { background: #d0ddee; border-radius: 40px; padding: 0.1rem 0.6rem; font-size: 0.65rem; font-weight: 600; }
-        .flex-botones { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.5rem; }
+        #promptOutput { width: 100%; border: none; background: #f8fafc; border-radius: 12px; padding: 1rem; font-size: 0.9rem; line-height: 1.6; resize: vertical; min-height: 350px; font-family: inherit; }
     </style>
 </head>
 <body>
 <div class="dashboard">
-    <h1>📘 ATPP V2.3 <span class="badge-v2">Prompts reforzados</span></h1>
-    <div class="sub">Selecciona finalidad, nivel, contenido → Genera un prompt que obliga a la IA a producir HTML con visualizaciones ricas</div>
+    <h1>📘 ATPP V2.4 <span class="badge-v2">3 Niveles</span></h1>
+    <div class="sub">Genera un prompt que ordena a la IA crear actividades con 3 niveles de dificultad integrados</div>
 
     <div class="fila">
         <div class="campo">
@@ -76,7 +75,7 @@
             <textarea id="contenido" placeholder="Ej. Ecuaciones lineales">Ecuaciones lineales</textarea>
         </div>
         <div class="campo">
-            <label>🎯 Objetivo de aprendizaje</label>
+            <label>🎯 Objetivo</label>
             <input type="text" id="objetivo" placeholder="Ej. Resolver ecuaciones" value="Resolver ecuaciones de primer grado con una incógnita">
         </div>
         <div class="campo">
@@ -86,22 +85,20 @@
     </div>
 
     <div class="botonera">
-        <button class="btn" id="btnGenerar">🚀 Generar prompt mejorado</button>
+        <button class="btn" id="btnGenerar">🚀 Generar prompt con niveles</button>
         <button class="btn secundario" id="btnCopiarTodo">📋 Copiar prompt</button>
         <span id="feedbackCopiar" class="oculto copy-feedback">✅ Copiado</span>
     </div>
 
     <div id="resultadoPanel" class="resultado">
-        <h3>🔍 Herramientas investigadas (solo referencia)</h3>
+        <h3>🔍 Herramientas sugeridas (referencia)</h3>
         <div id="listaHerramientas"><span style="color:#3f5f7a;">Haz clic en "Generar"</span></div>
         <div class="separador"></div>
-        <h3>🧠 Prompt mejorado para la IA</h3>
-        <div style="background:#ffffff; border-radius:20px; padding:1.2rem 1.5rem; border:1px solid #cbdbea;">
-            <textarea id="promptOutput" readonly style="width:100%; border:none; background:#f8fafc; border-radius:12px; padding:1rem; font-size:0.9rem; line-height:1.6; resize:vertical; min-height:300px; font-family:inherit;">Aquí aparecerá el prompt mejorado.</textarea>
-        </div>
+        <h3>🧠 Prompt mejorado (con 3 niveles de dificultad)</h3>
+        <textarea id="promptOutput" readonly>Aquí aparecerá el prompt.</textarea>
         <div class="separador"></div>
         <div class="instruccion" style="border-left-color:#1e7b4a;">
-            <strong>💡 Instrucción para el maestro:</strong> Copia el prompt de arriba, pégalo en ChatGPT, Claude o Gemini, y la IA te devolverá 3 actividades en HTML con visualizaciones matemáticas (si aplica). Luego solo copia ese HTML y ábrelo en tu navegador.
+            <strong>💡 Instrucción para el maestro:</strong> Copia este prompt y pégalo en ChatGPT, Claude o Gemini. La IA te devolverá 3 actividades, cada una con 3 niveles de dificultad (fácil, medio, difícil) dentro del HTML. Luego solo copia el HTML y ábrelo en tu navegador.
         </div>
     </div>
 </div>
@@ -110,7 +107,7 @@
     (function() {
         "use strict";
 
-        // Base de datos de herramientas (solo para referencia en el prompt)
+        // Base de datos de herramientas (solo para referencia)
         const herramientas = [
             { id: 'APP-08', nombre: 'Padlet', familia: 'Muro colaborativo', confianza: 'Alta', descripcion: 'Muro digital para publicar texto, imágenes, audio y video.', como_funciona: 'El docente crea un muro y comparte enlace; los alumnos publican sin cuenta.', finalidades: ['colaborar','organizar','crear','reflexionar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-04', nombre: 'Educaplay', familia: 'Actividades multimedia', confianza: 'Media-alta', descripcion: 'Crea crucigramas, mapas, juegos de memoria, etc.', como_funciona: 'El docente diseña una actividad y comparte enlace; los alumnos resuelven en línea.', finalidades: ['practicar','evaluar','crear'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
@@ -166,9 +163,9 @@
 
             const sugeridas = sugerirHerramientas(finalidad, nivel);
 
-            // Mostrar herramientas (solo referencia)
+            // Mostrar herramientas (referencia)
             if (!sugeridas.length) {
-                listaEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación. Prueba con otra finalidad o nivel.</div>';
+                listaEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación.</div>';
             } else {
                 let html = '';
                 sugeridas.slice(0, 5).forEach(h => {
@@ -177,17 +174,14 @@
                 listaEl.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
             }
 
-            // --- PROMPT MEJORADO ---
+            // --- PROMPT MEJORADO CON 3 NIVELES DE DIFICULTAD ---
             const herramientasTexto = sugeridas.map(h => 
                 `- ${h.nombre} (${h.confianza}): ${h.descripcion}. Cómo funciona: ${h.como_funciona}`
             ).join('\n');
 
-            // Detectar si es matemáticas para incluir MathJax
             const esMatematicas = /matem|álgebra|cálculo|geometría|ecuaci|función|gráfic|trigonometría/i.test(campo + ' ' + contenido);
-            const incluirMathJax = esMatematicas ? `
-- **REQUISITO OBLIGATORIO:** Si el contenido involucra notación matemática (ecuaciones, fórmulas, símbolos), DEBES incluir la librería MathJax en el HTML para renderizar las ecuaciones correctamente. Añade en el <head>:
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  Y escribe las ecuaciones entre \\( ... \\) (inline) o \\[ ... \\] (display). Por ejemplo: \\[ x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\]` : '';
+            const mathJaxTag = esMatematicas ? 
+                `<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>` : '';
 
             const prompt = `ACTÚA COMO UN EXPERTO EN DISEÑO DE ACTIVIDADES EDUCATIVAS Y DESARROLLO WEB.  
 
@@ -202,24 +196,33 @@
 **HERRAMIENTAS SUGERIDAS (investigadas):**  
 ${herramientasTexto}  
 
-**INSTRUCCIONES DETALLADAS PARA GENERAR LAS ACTIVIDADES:**  
+**INSTRUCCIONES DETALLADAS:**  
 
-Diseña **3 actividades de microlearning** (cada una de 5 a 10 minutos) que sean prácticas, atractivas y alineadas con el contenido y el nivel indicado. Para cada actividad, debes entregar:  
+Diseña **3 actividades de microlearning** (cada una de 5 a 10 minutos). Para cada actividad, **debes incluir 3 niveles de dificultad** (principiante, intermedio, avanzado) que permitan atender la diversidad del aula. Los niveles deben diferenciarse en:  
+- Grado de apoyo o andamiaje (más pistas en el nivel bajo).  
+- Complejidad de las tareas (ejercicios más simples vs. más complejos).  
+- Profundidad de la reflexión o aplicación.  
 
-1. **Título claro y motivador.**  
-2. **Herramienta principal** (elige una de las sugeridas o una análoga que sea más adecuada).  
-3. **Descripción paso a paso** de lo que el estudiante debe hacer, incluyendo ejemplos concretos si es necesario.  
-4. **Propósito de aprendizaje** (qué se espera que el estudiante logre con la actividad).  
-5. **Criterio de éxito** (evidencia mínima de aprendizaje, por ejemplo: "resuelve correctamente 3 de 5 ecuaciones" o "identifica 4 características en el mapa").  
+**Estructura de cada actividad:**  
+1. Título y herramienta principal (elige una de las sugeridas o análoga).  
+2. Descripción general de la actividad.  
+3. **Tres variantes (niveles)**, cada una con:  
+   - Instrucciones específicas para ese nivel.  
+   - Ejemplos o ejercicios concretos.  
+   - Criterio de éxito adaptado.  
 
-**ADEMÁS, PARA CADA ACTIVIDAD DEBES GENERAR UN CÓDIGO HTML COMPLETO, AUTOCONTENIDO Y LISTO PARA USAR,** que cumpla con:  
+**ADEMÁS, PARA CADA ACTIVIDAD DEBES GENERAR UN CÓDIGO HTML COMPLETO, AUTOCONTENIDO Y LISTO PARA USAR,** que:  
+- Sea visualmente atractivo (colores suaves, tipografía legible, espaciado adecuado).  
+- Incluya todos los estilos CSS dentro del mismo archivo.  
+- Sea responsivo (adaptable a móviles y tablets).  
+- Muestre claramente los tres niveles (puedes usar pestañas, acordeones o secciones separadas).  
+- Si el contenido es matemático o científico, incluye la librería MathJax (como se indica) para renderizar ecuaciones.  
+- Si la actividad implica gráficos, usa SVG o Canvas dentro del HTML.  
 
-- Ser visualmente atractivo (colores suaves, tipografía legible, espaciado adecuado).  
-- Incluir todos los estilos CSS dentro del mismo archivo (sin dependencias externas, excepto las que se indiquen).  
-- Ser responsivo (adaptable a móviles y tablets).  
-- Tener una estructura clara: encabezado, desarrollo de la actividad, instrucciones para el estudiante, y un espacio para registrar respuestas o reflexiones.  
-- **SI EL CONTENIDO ES MATEMÁTICO O CIENTÍFICO**, incluir la librería MathJax (como se indica abajo) para mostrar ecuaciones y fórmulas correctamente.${incluirMathJax}  
-- Si la actividad implica gráficos o diagramas, usar SVG o Canvas dentro del HTML para representarlos (no imágenes externas).  
+**REQUISITO OBLIGATORIO DE MATHJAX (si aplica):**  
+Añade en el <head>:  
+${mathJaxTag ? `<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>` : 'No aplica.'}  
+Y escribe las ecuaciones entre \\( ... \\) (inline) o \\[ ... \\] (display).  
 
 **EJEMPLO DE ESTRUCTURA HTML (puedes adaptarlo):**  
 \`\`\`html  
@@ -230,21 +233,24 @@ Diseña **3 actividades de microlearning** (cada una de 5 a 10 minutos) que sean
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>Actividad: [título]</title>  
     <style>  
-        /* Estilos CSS aquí */  
+        /* Estilos CSS */  
+        .nivel { display: none; }  
+        .nivel.activo { display: block; }  
+        /* Botones para cambiar de nivel */  
     </style>  
-    ${esMatematicas ? '<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>' : ''}  
+    ${mathJaxTag}  
 </head>  
 <body>  
-    <!-- Contenido de la actividad -->  
+    <!-- Contenido con tres niveles -->  
 </body>  
 </html>  
 \`\`\`  
 
 **ENTREGA FINAL:**  
-Proporciona las 3 actividades en texto plano (con sus descripciones) y, después de cada una, el bloque de código HTML completo entre etiquetas \`\`\`html ... \`\`\`. Asegúrate de que el HTML sea funcional y no requiera ajustes adicionales por parte del maestro.  
+Proporciona las 3 actividades en texto plano (con sus descripciones y niveles) y, después de cada una, el bloque de código HTML completo entre etiquetas \`\`\`html ... \`\`\`. Asegúrate de que el HTML sea funcional y que los tres niveles sean fácilmente accesibles para el maestro y los estudiantes.  
 
 **NOTA PARA EL MAESTRO:**  
-Este prompt está diseñado para que la IA genere actividades con un alto valor pedagógico y visual. Solo copia el HTML resultante y pégalo en un archivo .html para abrirlo en tu navegador, o utiliza servicios como CodePen para obtener un enlace público.`;
+Este prompt está diseñado para generar actividades diferenciadas. Copia el HTML resultante y ábrelo en tu navegador. Si usas CodePen, puedes obtener un enlace público para compartir.`;
 
             promptEl.value = prompt;
         }
@@ -252,7 +258,7 @@ Este prompt está diseñado para que la IA genere actividades con un alto valor 
         // Copiar prompt
         btnCopiar.addEventListener('click', function() {
             const texto = promptEl.value;
-            if (!texto || texto === 'Aquí aparecerá el prompt mejorado.') {
+            if (!texto || texto === 'Aquí aparecerá el prompt.') {
                 alert('Primero haz clic en "Generar".');
                 return;
             }
