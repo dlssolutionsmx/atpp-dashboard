@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATPP V2.1 — Generador funcional</title>
+    <title>ATPP V2.3 — Prompts reforzados</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background: #eef3f9; display: flex; justify-content: center; padding: 1.5rem; margin: 0; }
@@ -32,12 +32,13 @@
         .separador { border-top: 2px dashed #bccfdf; margin: 1.5rem 0; }
         .instruccion { background: #e8f0fe; border-radius: 16px; padding: 1rem 1.5rem; border-left: 4px solid #2b7be4; margin: 0.8rem 0; }
         .mini-badge { background: #d0ddee; border-radius: 40px; padding: 0.1rem 0.6rem; font-size: 0.65rem; font-weight: 600; }
+        .flex-botones { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.5rem; }
     </style>
 </head>
 <body>
-<div class="dashboard" id="app">
-    <h1>📘 ATPP V2.1 <span class="badge-v2">Corregido</span></h1>
-    <div class="sub">Selecciona finalidad, nivel, contenido → Genera 3 actividades con HTML funcional</div>
+<div class="dashboard">
+    <h1>📘 ATPP V2.3 <span class="badge-v2">Prompts reforzados</span></h1>
+    <div class="sub">Selecciona finalidad, nivel, contenido → Genera un prompt que obliga a la IA a producir HTML con visualizaciones ricas</div>
 
     <div class="fila">
         <div class="campo">
@@ -64,19 +65,19 @@
             </select>
         </div>
         <div class="campo">
-            <label>📖 Campo</label>
+            <label>📖 Campo / asignatura</label>
             <input type="text" id="campo" placeholder="Ej. Matemáticas" value="Matemáticas">
         </div>
     </div>
 
     <div class="fila">
         <div class="campo grande">
-            <label>✏️ Contenido / tema</label>
+            <label>✏️ Contenido / tema específico</label>
             <textarea id="contenido" placeholder="Ej. Ecuaciones lineales">Ecuaciones lineales</textarea>
         </div>
         <div class="campo">
-            <label>🎯 Objetivo</label>
-            <input type="text" id="objetivo" placeholder="Ej. Resolver ecuaciones" value="Resolver ecuaciones de primer grado">
+            <label>🎯 Objetivo de aprendizaje</label>
+            <input type="text" id="objetivo" placeholder="Ej. Resolver ecuaciones" value="Resolver ecuaciones de primer grado con una incógnita">
         </div>
         <div class="campo">
             <label>⏱️ Duración (min)</label>
@@ -85,24 +86,22 @@
     </div>
 
     <div class="botonera">
-        <button class="btn" id="btnGenerar">🚀 Generar actividades</button>
-        <button class="btn secundario" id="btnCopiarTodo">📋 Copiar todo</button>
+        <button class="btn" id="btnGenerar">🚀 Generar prompt mejorado</button>
+        <button class="btn secundario" id="btnCopiarTodo">📋 Copiar prompt</button>
         <span id="feedbackCopiar" class="oculto copy-feedback">✅ Copiado</span>
     </div>
 
     <div id="resultadoPanel" class="resultado">
-        <h3>🔍 Herramientas investigadas</h3>
+        <h3>🔍 Herramientas investigadas (solo referencia)</h3>
         <div id="listaHerramientas"><span style="color:#3f5f7a;">Haz clic en "Generar"</span></div>
         <div class="separador"></div>
-        <h3>📝 Actividades generadas (HTML)</h3>
-        <div id="actividadesContainer"><div class="instruccion">Aquí aparecerán 3 actividades con su código HTML.</div></div>
-        <div class="separador"></div>
+        <h3>🧠 Prompt mejorado para la IA</h3>
         <div style="background:#ffffff; border-radius:20px; padding:1.2rem 1.5rem; border:1px solid #cbdbea;">
-            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.3rem;">
-                <span style="font-weight:600; color:#0b2b4a;">🧠 Prompt completo</span>
-                <span style="font-size:0.7rem; background:#e5edf8; padding:0.2rem 0.8rem; border-radius:40px;">copia y pega</span>
-            </div>
-            <textarea id="promptOutput" readonly style="width:100%; border:none; background:#f8fafc; border-radius:12px; padding:1rem; font-size:0.9rem; line-height:1.6; resize:vertical; min-height:120px; font-family:inherit;">Aquí aparecerá el prompt.</textarea>
+            <textarea id="promptOutput" readonly style="width:100%; border:none; background:#f8fafc; border-radius:12px; padding:1rem; font-size:0.9rem; line-height:1.6; resize:vertical; min-height:300px; font-family:inherit;">Aquí aparecerá el prompt mejorado.</textarea>
+        </div>
+        <div class="separador"></div>
+        <div class="instruccion" style="border-left-color:#1e7b4a;">
+            <strong>💡 Instrucción para el maestro:</strong> Copia el prompt de arriba, pégalo en ChatGPT, Claude o Gemini, y la IA te devolverá 3 actividades en HTML con visualizaciones matemáticas (si aplica). Luego solo copia ese HTML y ábrelo en tu navegador.
         </div>
     </div>
 </div>
@@ -111,8 +110,9 @@
     (function() {
         "use strict";
 
+        // Base de datos de herramientas (solo para referencia en el prompt)
         const herramientas = [
-            { id: 'APP-08', nombre: 'Padlet', familia: 'Muro colaborativo', confianza: 'Alta', descripcion: 'Muro digital donde se publican textos, imágenes, audio y video. Ideal para lluvia de ideas.', como_funciona: 'El docente crea un muro y comparte enlace; los alumnos publican sin cuenta.', finalidades: ['colaborar','organizar','crear','reflexionar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
+            { id: 'APP-08', nombre: 'Padlet', familia: 'Muro colaborativo', confianza: 'Alta', descripcion: 'Muro digital para publicar texto, imágenes, audio y video.', como_funciona: 'El docente crea un muro y comparte enlace; los alumnos publican sin cuenta.', finalidades: ['colaborar','organizar','crear','reflexionar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-04', nombre: 'Educaplay', familia: 'Actividades multimedia', confianza: 'Media-alta', descripcion: 'Crea crucigramas, mapas, juegos de memoria, etc.', como_funciona: 'El docente diseña una actividad y comparte enlace; los alumnos resuelven en línea.', finalidades: ['practicar','evaluar','crear'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-12', nombre: 'Google Earth', familia: 'Visualización 3D', confianza: 'Alta', descripcion: 'Globo virtual con imágenes satelitales y recorridos guiados.', como_funciona: 'Se navega, se miden distancias y se crean proyectos con marcadores.', finalidades: ['explorar','representar','contextualizar'], nivel: ['Primaria (3°-6°)','Secundaria (1°-3°)','Media superior (preparatoria)'] },
             { id: 'APP-13', nombre: 'GeoGebra', familia: 'Matemáticas dinámicas', confianza: 'Alta', descripcion: 'Geometría, álgebra, cálculo y gráficas interactivas.', como_funciona: 'Manipula objetos matemáticos y observa cambios en tiempo real.', finalidades: ['representar','modelar','explorar','practicar'], nivel: ['Secundaria (1°-3°)','Media superior (preparatoria)'] },
@@ -143,60 +143,7 @@
             });
         }
 
-        function generarHTMLActividad(titulo, herramienta, descripcion, finalidad, contenido, objetivo, duracion) {
-            return `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Actividad: ${titulo}</title>
-<style>
-body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; background: #f4f8ff; color: #0b2b4a; }
-.card { background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
-h1 { color: #0b2b4a; border-bottom: 3px solid #2b7be4; padding-bottom: 0.5rem; }
-.badge { background: #2b7be4; color: white; padding: 0.2rem 0.8rem; border-radius: 40px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
-.instruccion { background: #e8f0fe; padding: 1.2rem; border-radius: 16px; margin: 1.5rem 0; border-left: 4px solid #2b7be4; }
-.herramienta { background: #f0f5fe; padding: 0.8rem 1.2rem; border-radius: 40px; display: inline-block; margin: 0.5rem 0; }
-.pasos { background: #f9fafc; padding: 1rem 1.5rem; border-radius: 16px; margin: 1rem 0; }
-.exito { background: #dff0e6; padding: 0.8rem 1.2rem; border-radius: 12px; border-left: 4px solid #1e7b4a; }
-</style>
-</head>
-<body>
-<div class="card">
-    <h1>📘 ${titulo}</h1>
-    <div><span class="badge">${finalidad}</span> <span class="badge" style="background:#6c7a8a;">⏱️ ${duracion} min</span></div>
-    <div class="herramienta">🛠️ <strong>Herramienta:</strong> ${herramienta}</div>
-    <div class="instruccion"><strong>🎯 Objetivo:</strong> ${objetivo}</div>
-    <h3>📋 Descripción</h3>
-    <p>${descripcion}</p>
-    <h3>📌 Contenido</h3>
-    <p><strong>${contenido}</strong></p>
-    <div class="pasos"><h4>🔹 Pasos</h4><ol><li>Accede a ${herramienta}.</li><li>Sigue las instrucciones del docente.</li><li>Registra tus respuestas o creaciones.</li><li>Comparte tu evidencia.</li></ol></div>
-    <div class="exito"><strong>✅ Criterio de éxito:</strong> El estudiante demuestra comprensión de ${contenido} mediante la actividad.</div>
-    <p style="margin-top: 2rem; font-size: 0.8rem; color: #6c7a8a; text-align: center;">Generado por ATPP V2.1</p>
-</div>
-</body>
-</html>`;
-        }
-
-        function generarActividades(herramientasSugeridas, finalidad, contenido, objetivo, duracion) {
-            if (!herramientasSugeridas.length) return null;
-            const seleccionadas = herramientasSugeridas.slice(0, 3);
-            const titulos = [
-                `Explorando ${contenido} con ${seleccionadas[0].nombre}`,
-                `Practicando ${contenido} con ${seleccionadas[1]?.nombre || seleccionadas[0].nombre}`,
-                `Creando con ${contenido} usando ${seleccionadas[2]?.nombre || seleccionadas[0].nombre}`
-            ];
-            const descs = [
-                `Los estudiantes usarán ${seleccionadas[0].nombre} para explorar y comprender ${contenido}. Interactuarán con la herramienta, realizarán observaciones y registrarán hallazgos.`,
-                `Mediante ${seleccionadas[1]?.nombre || seleccionadas[0].nombre}, los estudiantes practicarán y aplicarán conocimientos sobre ${contenido}. La retroalimentación inmediata facilita el aprendizaje autónomo.`,
-                `Con ${seleccionadas[2]?.nombre || seleccionadas[0].nombre}, los estudiantes crearán un producto (modelo, historia, mapa, etc.) relacionado con ${contenido}. Fomenta creatividad y síntesis.`
-            ];
-            return seleccionadas.map((h, i) => ({
-                titulo: titulos[i % titulos.length],
-                herramienta: h.nombre,
-                descripcion: descs[i % descs.length],
-                html: generarHTMLActividad(titulos[i % titulos.length], h.nombre, descs[i % descs.length], finalidad, contenido, objetivo, duracion)
-            }));
-        }
-
+        // Elementos
         const finalidadEl = document.getElementById('finalidad');
         const nivelEl = document.getElementById('nivel');
         const campoEl = document.getElementById('campo');
@@ -207,11 +154,9 @@ h1 { color: #0b2b4a; border-bottom: 3px solid #2b7be4; padding-bottom: 0.5rem; }
         const btnCopiar = document.getElementById('btnCopiarTodo');
         const feedback = document.getElementById('feedbackCopiar');
         const listaEl = document.getElementById('listaHerramientas');
-        const actividadesEl = document.getElementById('actividadesContainer');
         const promptEl = document.getElementById('promptOutput');
 
         function actualizar() {
-            console.log('Generando...');
             const finalidad = finalidadEl.value;
             const nivel = nivelEl.value;
             const campo = campoEl.value.trim() || 'general';
@@ -221,6 +166,7 @@ h1 { color: #0b2b4a; border-bottom: 3px solid #2b7be4; padding-bottom: 0.5rem; }
 
             const sugeridas = sugerirHerramientas(finalidad, nivel);
 
+            // Mostrar herramientas (solo referencia)
             if (!sugeridas.length) {
                 listaEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">⚠️ No hay herramientas para esta combinación. Prueba con otra finalidad o nivel.</div>';
             } else {
@@ -231,73 +177,85 @@ h1 { color: #0b2b4a; border-bottom: 3px solid #2b7be4; padding-bottom: 0.5rem; }
                 listaEl.innerHTML = html + (sugeridas.length > 5 ? `<div style="color:#3f5f7a; font-size:0.85rem;">... y ${sugeridas.length - 5} más.</div>` : '');
             }
 
-            const actividades = generarActividades(sugeridas, finalidad, contenido, objetivo, duracion);
-            if (!actividades) {
-                actividadesEl.innerHTML = '<div class="instruccion" style="border-left-color:#d9534f;">No hay herramientas suficientes para generar actividades.</div>';
-            } else {
-                let html = '';
-                actividades.forEach((act, idx) => {
-                    html += `
-                        <div style="margin-bottom:2rem;">
-                            <h4 style="color:#0b2b4a; margin:0.5rem 0 0.3rem;">📌 Actividad ${idx+1}: ${act.titulo}</h4>
-                            <div style="background:#f8fafc; border-radius:12px; padding:0.8rem 1.2rem; margin-bottom:0.5rem;">
-                                <strong>🛠️ Herramienta:</strong> ${act.herramienta}<br>
-                                <strong>📝 Descripción:</strong> ${act.descripcion}
-                            </div>
-                            <div class="actividad-html">${act.html}</div>
-                            <button class="btn secundario" style="padding:0.4rem 1.2rem; font-size:0.85rem;" onclick="copiarActividad(this)">📋 Copiar HTML</button>
-                        </div>
-                    `;
-                });
-                actividadesEl.innerHTML = html;
-            }
+            // --- PROMPT MEJORADO ---
+            const herramientasTexto = sugeridas.map(h => 
+                `- ${h.nombre} (${h.confianza}): ${h.descripcion}. Cómo funciona: ${h.como_funciona}`
+            ).join('\n');
 
-            let herramientasTexto = sugeridas.map(h => `- ${h.nombre} (${h.confianza}): ${h.descripcion} | Funciona: ${h.como_funciona}`).join('\n');
-            const prompt = `ACTÚA COMO EXPERTO EN DISEÑO EDUCATIVO Y MICROLEARNING.
+            // Detectar si es matemáticas para incluir MathJax
+            const esMatematicas = /matem|álgebra|cálculo|geometría|ecuaci|función|gráfic|trigonometría/i.test(campo + ' ' + contenido);
+            const incluirMathJax = esMatematicas ? `
+- **REQUISITO OBLIGATORIO:** Si el contenido involucra notación matemática (ecuaciones, fórmulas, símbolos), DEBES incluir la librería MathJax en el HTML para renderizar las ecuaciones correctamente. Añade en el <head>:
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  Y escribe las ecuaciones entre \\( ... \\) (inline) o \\[ ... \\] (display). Por ejemplo: \\[ x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\]` : '';
 
-CONTEXTO:
-- Finalidad: ${finalidad}
-- Nivel: ${nivel}
-- Campo: ${campo}
-- Contenido: ${contenido}
-- Objetivo: ${objetivo}
-- Duración: ${duracion} min
+            const prompt = `ACTÚA COMO UN EXPERTO EN DISEÑO DE ACTIVIDADES EDUCATIVAS Y DESARROLLO WEB.  
 
-HERRAMIENTAS INVESTIGADAS:
-${herramientasTexto}
+**CONTEXTO PEDAGÓGICO:**  
+- Finalidad: ${finalidad}  
+- Nivel: ${nivel}  
+- Campo/Asignatura: ${campo}  
+- Contenido específico: ${contenido}  
+- Objetivo de aprendizaje: ${objetivo}  
+- Duración estimada: ${duracion} minutos  
 
-INSTRUCCIÓN:
-Diseña 3 actividades de microlearning (5-10 min) que sean viables, atractivas y alineadas al contenido. Para cada actividad incluye:
-1. Título.
-2. Herramienta principal (de las sugeridas o análoga).
-3. Descripción detallada de la dinámica (pasos).
-4. Propósito de aprendizaje.
-5. Criterio de éxito.
+**HERRAMIENTAS SUGERIDAS (investigadas):**  
+${herramientasTexto}  
 
-Además, genera el código HTML completo y funcional para cada actividad (estilos embebidos, auto-contenido). El HTML debe ser claro, amigable y listo para usar.
+**INSTRUCCIONES DETALLADAS PARA GENERAR LAS ACTIVIDADES:**  
 
-Formato: para cada actividad, primero la descripción en texto, luego el código HTML entre bloques \`\`\`html ... \`\`\`.`;
+Diseña **3 actividades de microlearning** (cada una de 5 a 10 minutos) que sean prácticas, atractivas y alineadas con el contenido y el nivel indicado. Para cada actividad, debes entregar:  
+
+1. **Título claro y motivador.**  
+2. **Herramienta principal** (elige una de las sugeridas o una análoga que sea más adecuada).  
+3. **Descripción paso a paso** de lo que el estudiante debe hacer, incluyendo ejemplos concretos si es necesario.  
+4. **Propósito de aprendizaje** (qué se espera que el estudiante logre con la actividad).  
+5. **Criterio de éxito** (evidencia mínima de aprendizaje, por ejemplo: "resuelve correctamente 3 de 5 ecuaciones" o "identifica 4 características en el mapa").  
+
+**ADEMÁS, PARA CADA ACTIVIDAD DEBES GENERAR UN CÓDIGO HTML COMPLETO, AUTOCONTENIDO Y LISTO PARA USAR,** que cumpla con:  
+
+- Ser visualmente atractivo (colores suaves, tipografía legible, espaciado adecuado).  
+- Incluir todos los estilos CSS dentro del mismo archivo (sin dependencias externas, excepto las que se indiquen).  
+- Ser responsivo (adaptable a móviles y tablets).  
+- Tener una estructura clara: encabezado, desarrollo de la actividad, instrucciones para el estudiante, y un espacio para registrar respuestas o reflexiones.  
+- **SI EL CONTENIDO ES MATEMÁTICO O CIENTÍFICO**, incluir la librería MathJax (como se indica abajo) para mostrar ecuaciones y fórmulas correctamente.${incluirMathJax}  
+- Si la actividad implica gráficos o diagramas, usar SVG o Canvas dentro del HTML para representarlos (no imágenes externas).  
+
+**EJEMPLO DE ESTRUCTURA HTML (puedes adaptarlo):**  
+\`\`\`html  
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Actividad: [título]</title>  
+    <style>  
+        /* Estilos CSS aquí */  
+    </style>  
+    ${esMatematicas ? '<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>' : ''}  
+</head>  
+<body>  
+    <!-- Contenido de la actividad -->  
+</body>  
+</html>  
+\`\`\`  
+
+**ENTREGA FINAL:**  
+Proporciona las 3 actividades en texto plano (con sus descripciones) y, después de cada una, el bloque de código HTML completo entre etiquetas \`\`\`html ... \`\`\`. Asegúrate de que el HTML sea funcional y no requiera ajustes adicionales por parte del maestro.  
+
+**NOTA PARA EL MAESTRO:**  
+Este prompt está diseñado para que la IA genere actividades con un alto valor pedagógico y visual. Solo copia el HTML resultante y pégalo en un archivo .html para abrirlo en tu navegador, o utiliza servicios como CodePen para obtener un enlace público.`;
+
             promptEl.value = prompt;
-            console.log('Generación completada.');
         }
 
-        window.copiarActividad = function(btn) {
-            const bloque = btn.previousElementSibling;
-            if (bloque && bloque.classList.contains('actividad-html')) {
-                const texto = bloque.textContent;
-                navigator.clipboard.writeText(texto).then(() => {
-                    const orig = btn.textContent;
-                    btn.textContent = '✅ Copiado';
-                    setTimeout(() => btn.textContent = orig, 2000);
-                }).catch(() => {
-                    alert('Copia manual: selecciona el código y copia (Ctrl+C)');
-                });
-            }
-        };
-
+        // Copiar prompt
         btnCopiar.addEventListener('click', function() {
-            const texto = promptEl.value + '\n\n--- HTML de actividades ---\n\n' + 
-                Array.from(document.querySelectorAll('.actividad-html')).map(el => el.textContent).join('\n\n---\n\n');
+            const texto = promptEl.value;
+            if (!texto || texto === 'Aquí aparecerá el prompt mejorado.') {
+                alert('Primero haz clic en "Generar".');
+                return;
+            }
             navigator.clipboard.writeText(texto).then(() => {
                 feedback.classList.remove('oculto');
                 setTimeout(() => feedback.classList.add('oculto'), 3000);
@@ -311,7 +269,6 @@ Formato: para cada actividad, primero la descripción en texto, luego el código
 
         btnGenerar.addEventListener('click', actualizar);
         actualizar();
-        console.log('Dashboard listo.');
     })();
 </script>
 </body>
