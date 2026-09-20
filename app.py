@@ -17,6 +17,48 @@ st.set_page_config(
 )
 
 
+st.markdown(
+    """
+    <style>
+    /* Elimina el límite estrecho predeterminado de Streamlit. */
+    [data-testid="stAppViewContainer"] .main .block-container,
+    [data-testid="stMainBlockContainer"] {
+        width: 100%;
+        max-width: none;
+        padding-left: clamp(1rem, 2.5vw, 3rem);
+        padding-right: clamp(1rem, 2.5vw, 3rem);
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+
+    /* El iframe del selector ocupa todo el ancho del contenedor principal. */
+    [data-testid="stIFrame"],
+    [data-testid="stIFrame"] iframe,
+    iframe[title="st.iframe"] {
+        display: block;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    /* Evita que los elementos internos del bloque creen un margen lateral extra. */
+    [data-testid="stVerticalBlockBorderWrapper"],
+    [data-testid="stElementContainer"] {
+        max-width: none;
+    }
+
+    @media (max-width: 640px) {
+        [data-testid="stAppViewContainer"] .main .block-container,
+        [data-testid="stMainBlockContainer"] {
+            padding-left: .75rem;
+            padding-right: .75rem;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 def load_dashboard() -> str:
     """Carga sin transformar la versión HTML validada del selector."""
     if not DASHBOARD_FILE.is_file():
