@@ -114,4 +114,4 @@ def render_header() -> None:
 
 render_header()
 
-components.html(load_dashboard(), height=1800, scrolling=True)
+components.html(load_dashboard(), height=2600, scrolling=False)
